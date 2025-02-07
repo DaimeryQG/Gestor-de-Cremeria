@@ -76,3 +76,24 @@ header {
 #menuButton .bi {
   vertical-align: middle;
 }
+
+/* Ajustar ancho del menú */
+#sidebar {
+  width: 200px; /* Reducir el ancho del menú */
+}
+
+/* Estilo para los enlaces */
+.menu-link {
+  font-size: 1.1rem; /* Aumentar el tamaño de la letra */
+  text-decoration: none; /* Quitar el subrayado */
+  color: #333; /* Color inicial */
+  display: block; /* Asegura que sea un bloque completo */
+  padding: 0.5rem 0; /* Espaciado entre enlaces */
+  transition: color 0.3s, background-color 0.3s; /* Suavizar los cambios */
+}
+
+/* Cambiar color al pasar el cursor */
+.menu-link:hover {
+  color: #007bff; /* Tonalidad azul */
+  background-color: #f1f1f1; /* Fondo claro al pasar el cursor */
+}
