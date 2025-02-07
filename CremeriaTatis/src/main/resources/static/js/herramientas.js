@@ -2,7 +2,6 @@
 const menuButton = document.getElementById("menuButton");
 const closeSidebar = document.getElementById("closeSidebar");
 const sidebar = document.getElementById("sidebar");
-
 menuButton.addEventListener("click", () => {
     sidebar.style.transform = "translateX(0)"; // Muestra el menú
 });
@@ -47,4 +46,4 @@ menuLinks.forEach(link => {
 
 // Cargar contenido inicial por defecto
 loadContent("../../templates/view/bienvenido/Bienvenido.html");
-
+/*  */
