@@ -1,0 +1,47 @@
+package com.back.back.service;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import com.back.back.model.Registro;
+import com.back.back.repository.RegistroRepository;
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    @Autowired
+    private RegistroRepository registroRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // Obtener el Optional<Registro> desde el repositorio
+        Optional<Registro> registroOptional = registroRepository.findByUsername(username);
+        
+        // Verificar si el usuario está presente
+        if (registroOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Usuario no encontrado");
+        }
+
+        // Extraer el registro del Optional
+        Registro registro = registroOptional.get();
+
+        // Crear las autoridades basadas en el rol del registro
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + registro.getRol().getNombre()));
+
+        // Devolver el objeto UserDetails con el username, password y autoridades
+        return new User(registro.getUsername(), registro.getPassword(), authorities);
+    }
+
+}
+

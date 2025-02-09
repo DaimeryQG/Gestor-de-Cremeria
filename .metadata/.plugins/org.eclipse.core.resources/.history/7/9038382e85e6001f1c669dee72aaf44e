@@ -1,0 +1,30 @@
+package com.back.back.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import com.back.back.model.Registro;
+import com.back.back.repository.RegistroRepository;
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    @Autowired
+    private RegistroRepository registroRepository; // Tu repositorio de usuarios
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Registro registro = registroRepository.findByUsername(username)
+                                             .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+        
+        return User.builder()
+                   .username(registro.getUsername())
+                   .password(registro.getPassword()) // Aquí el password debería ser cifrado si es necesario
+                   .roles(role) // Si tienes roles asociados, configúralo aquí
+                   .build();
+    }
+}

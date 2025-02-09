@@ -1,0 +1,23 @@
+package com.back.back.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.back.back.model.Registro;
+import com.back.back.repository.RegistroRepository;
+
+@Service
+public class RegistroService {
+
+    @Autowired
+    private RegistroRepository registroRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public Registro registrar(Registro registro) {
+        registro.setPassword(passwordEncoder.encode(registro.getPassword())); // Codifica la contraseña
+        return registroRepository.save(registro);
+    }
+}

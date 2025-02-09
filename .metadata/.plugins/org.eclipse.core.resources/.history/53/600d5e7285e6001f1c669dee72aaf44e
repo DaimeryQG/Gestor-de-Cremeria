@@ -1,0 +1,38 @@
+package com.back.back.service;
+
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Service;
+
+import com.back.back.model.Registro;  // Asegúrate de importar la clase Registro
+import com.back.back.repository.RegistroRepository;  // Asegúrate de tener un repositorio para Registro
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    private final RegistroRepository registroRepository;
+
+    // Constructor para inyectar el repositorio
+    public CustomUserDetailsService(RegistroRepository registroRepository) {
+        this.registroRepository = registroRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) {
+        // Obtén el registro (usuario) por su username desde la base de datos
+        Registro registro = registroRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Obtén el nombre del rol
+        String role = registro.getRol().getNombre();  // Usa el campo 'nombre' de la entidad Rol
+
+        // Construir el usuario para Spring Security
+        return User.builder()
+                .username(registro.getUsername())
+                .password(registro.getPassword())  // Asegúrate de tener la contraseña encriptada
+                .roles(role)  // Asigna el rol al usuario
+                .build();
+    }
+}
+

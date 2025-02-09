@@ -1,0 +1,31 @@
+package com.back.back.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Service;
+
+import com.back.back.model.Registro;
+import com.back.back.repository.RegistroRepository;
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    @Autowired
+    private RegistroRepository registroRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Registro registro = registroRepository.findByUsername(username);
+        if (registro == null) {
+            throw new UsernameNotFoundException("Usuario no encontrado");
+        }
+
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + registro.getRol().getNombre()));
+
+        return new User(registro.getUsername(), registro.getPassword(), authorities);
+    }
+}
+

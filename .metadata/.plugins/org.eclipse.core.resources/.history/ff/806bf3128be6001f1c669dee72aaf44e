@@ -1,0 +1,50 @@
+package com.back.back.controller;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.web.bind.annotation.*;
+
+import com.back.back.model.Registro;
+import com.back.back.service.RegistroService;
+
+@RestController
+@RequestMapping("/registros")
+public class RegistroController {
+
+    @Autowired
+    private RegistroService registroService;
+
+    // Endpoint para obtener todos los registros
+    @GetMapping
+    public List<Registro> obtenerTodos() {
+        return registroService.obtenerTodos();
+    }
+
+    // Endpoint para obtener un registro por ID
+    @GetMapping("/{id}")
+    public Optional<Registro> obtenerPorId(@PathVariable Long id) {
+        return registroService.obtenerPorId(id);
+    }
+
+    // Endpoint para registrar un nuevo usuario
+    @PostMapping("/registrar")
+    public Registro registrar(@RequestBody Registro registro) {
+        return registroService.registrar(registro);
+    }
+
+    // Endpoint para actualizar un registro por ID
+    @PutMapping("/{id}")
+    public Registro actualizar(@PathVariable Long id, @RequestBody Registro registro) {
+        return registroService.actualizar(id, registro);
+    }
+
+    // Endpoint para eliminar un registro por ID
+    @DeleteMapping("/{id}")
+    public void eliminar(@PathVariable Long id) {
+        registroService.eliminar(id);
+    }
+}
+
