@@ -9,6 +9,7 @@ import com.back.back.model.Registro;
 import com.back.back.service.RegistroService;
 
 @RestController
+@CrossOrigin(origins = "http://127.0.0.1:8080") 
 @RequestMapping("/registros")
 public class RegistroController {
 
