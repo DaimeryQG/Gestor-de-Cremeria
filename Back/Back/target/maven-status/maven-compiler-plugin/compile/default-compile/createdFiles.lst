@@ -1,0 +1,12 @@
+com\back\back\config\WebConfig.class
+com\back\back\controller\LoginController.class
+com\back\back\service\RegistroService$ResourceNotFoundException.class
+com\back\back\model\Rol.class
+com\back\back\service\RegistroService.class
+com\back\back\model\Registro.class
+com\back\back\repository\RegistroRepository.class
+com\back\back\config\SecurityConfig.class
+com\back\back\controller\RegistroController.class
+com\back\back\model\LoginRequest.class
+com\back\back\model\ResponseMessage.class
+com\back\back\BackApplication.class
