@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Inicial</title>
+    <!-- Enlace a Bootstrap CSS -->
+    <link href="../../static/bootstrap/dist/css/bootstrap.min.css?v=1.0.0" rel="stylesheet">
+    <!-- Enlace a Bootstrap Icons -->
+    <link href="../../static/bootstrap-icons/font/bootstrap-icons.css?v=1.0.0" rel="stylesheet">
+    <!-- Enlace a estilos personalizados -->
+    <link href="../../static/css/styles.css?v=1.0.3" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="bg-primary text-white py-2">
+        <div class="container d-flex align-items-center">
+            <!-- Botón para abrir el menú deslizable -->
+            <button class="btn btn-light me-3 d-flex align-items-center justify-content-center" id="menuButton"
+                aria-label="Abrir menú">
+                <i class="bi bi-three-dots-vertical fs-4"></i>
+            </button>
+            <!-- Título ajustable -->
+            <h1 class="mb-0 flex-grow-1 text-center text-white display-6 display-md-5 display-lg-4 fw-bold">
+                Sistema de control de inventario
+            </h1>
+        </div>
+    </header>
+
+    <!-- Menú deslizable -->
+    <div id="sidebar" class="position-fixed top-0 start-0 vh-100 bg-light shadow"
+        style="width: 200px; transform: translateX(-100%); transition: transform 0.3s;">
+        <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+            <h5 class="mb-0">Menú</h5>
+            <button class="btn btn-close" id="closeSidebar" aria-label="Cerrar"></button>
+        </div>
+        <ul class="list-unstyled p-3" id="menuList">
+            <li><a href="#" class="menu-link" data-target="../../templates/view/bienvenido/Bienvenido.html">Inicio</a></li>
+            <li><a href="#" class="menu-link" data-target="../../templates/view/ventas/ventas.html">Ventas</a></li>
+            <li><a href="#" class="menu-link" data-target="../../templates/view/precios/precios.html">Precios</a></li>
+            <li><a href="#" class="menu-link" data-target="../../templates/view/productos/productos.html">Productos</a></li>
+            <li><a href="#" class="menu-link" data-target="../../templates/view/proveedores/proveedores.html">Proveedores</a></li>
+            <li><a href="#" class="menu-link" data-target="../../templates/view/mapa/mapa.html">Mapa</a></li>
+            <li><a href="#" class="menu-link" data-target="../../templates/view/estadisticas/estadisticas.html">Estadísticas</a></li>
+        </ul>
+        
+    </div>
+
+
+    <!-- Contenido principal -->
+    <div class="container my-5">
+        <!-- Div dinámico para cargar vistas -->
+        <div id="DivDinamico" style="margin-top: -30px;">
+            
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="../../static/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Archivo de herramientas JS -->
+    <script src="../../static/js/herramientas.js?v=1.0.5"></script>
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+/*Mis estilos*/
+
+/* Fondo general del sitio */
+body {
+  background-color: #e0f7fa; /* Azul claro */
+  -webkit-text-size-adjust: 100%; /* Compatibilidad móvil */
+  text-size-adjust: 100%; /* Compatibilidad general */
+}
+
+/* Estilo personalizado para la tarjeta */
+.custom-card {
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 400px; /* Ancho máximo para móviles */
+  width: 100%; /* Ajuste automático */
+}
+
+/* Logo de la empresa */
+.logo {
+  max-width: 100px; /* Tamaño máximo para el logo */
+  height: auto;
+}
+
+/* Colores de texto */
+.title {
+  color: #007bff; /* Azul intenso */
+  font-weight: bold;
+}
+.subtitle {
+  color: #6c757d; /* Gris claro */
+}
+
+/* Botón principal */
+.btn-primary {
+  background-color: #007bff; /* Azul intenso */
+  border-color: #007bff;
+}
+.btn-primary:hover {
+  background-color: #0056b3; /* Azul más oscuro */
+  border-color: #004085;
+}
+
+/* Campos de formulario */
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Enlace de recuperación de contraseña */
+.link-primary {
+  color: #0056b3;
+  text-decoration: none;
+}
+.link-primary:hover {
+  text-decoration: underline;
+}
+
+/* Header */
+header {
+  background-color: #007bff; /* Azul Bootstrap */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: match-parent; /* Solución para compatibilidad */
+}
+
+/* Botón de menú */
+#menuButton {
+  border: none;
+  background-color: transparent;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Aseguramos que los iconos se ajusten */
+#menuButton .bi {
+  vertical-align: middle;
+}
+
+/* Ajustar ancho del menú */
+#sidebar {
+  width: 200px; /* Reducir el ancho del menú */
+}
+
+/* Estilo para los enlaces */
+.menu-link {
+  font-size: 1.1rem; /* Aumentar el tamaño de la letra */
+  text-decoration: none; /* Quitar el subrayado */
+  color: #333; /* Color inicial */
+  display: block; /* Asegura que sea un bloque completo */
+  padding: 0.5rem 0; /* Espaciado entre enlaces */
+  transition: color 0.3s, background-color 0.3s; /* Suavizar los cambios */
+}
+
+/* Cambiar color al pasar el cursor */
+.menu-link:hover {
+  color: #007bff; /* Tonalidad azul */
+  background-color: #f1f1f1; /* Fondo claro al pasar el cursor */
+}
