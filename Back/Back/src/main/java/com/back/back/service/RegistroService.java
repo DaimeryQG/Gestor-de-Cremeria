@@ -13,15 +13,17 @@ import com.back.back.repository.RegistroRepository;
 public class RegistroService {
 
     @Autowired
-    private RegistroRepository registroRepository;
+    private RegistroRepository registroRepository; // Repositorio de Registro
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder; // 🔹 Inyectamos BCryptPasswordEncoder
 
+    // Metodo para obtener todos los registros
     public List<Registro> obtenerTodos() {
         return registroRepository.findAll();
     }
 
+    // Metodo por obtener los registros por el "id"
     public Registro obtenerPorId(Long id) {
         return registroRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Registro no encontrado con ID: " + id));
@@ -59,20 +61,25 @@ public class RegistroService {
                 .orElseThrow(() -> new ResourceNotFoundException("Registro no encontrado con ID: " + id));
         registroRepository.delete(registro);
     }
-
-    public boolean verificarCredenciales(String username, String passwordIngresada) {
-        Registro usuario = registroRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        return passwordEncoder.matches(passwordIngresada, usuario.getPassword());
-    }
-
+    
     // Excepción personalizada
     public static class ResourceNotFoundException extends RuntimeException {
         public ResourceNotFoundException(String message) {
             super(message);
         }
     }
+
+    public Registro buscarPorNombre(String nombre) {
+        return registroRepository.findByNombre(nombre);
+    }
+
+    public Registro buscarPorCurp(String curp) {
+        return registroRepository.findByCurp(curp);
+    }
+
+    public Registro buscarPorRfc(String rfc) {
+        return registroRepository.findByRfc(rfc);
+    } 
 }
 
 

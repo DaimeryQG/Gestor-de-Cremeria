@@ -2,7 +2,7 @@ package com.back.back.controller;
 
 import com.back.back.model.LoginRequest;
 import com.back.back.model.ResponseMessage;
-import com.back.back.service.RegistroService;
+import com.back.back.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
 
     @Autowired
-    private RegistroService registroService;
+    private LoginService loginService;
 
     @PostMapping
     public ResponseMessage login(@RequestBody LoginRequest loginRequest) {
         // Verificamos si las credenciales son correctas
-        boolean esAutenticado = registroService.verificarCredenciales(loginRequest.getUsername(), loginRequest.getPassword());
+        boolean esAutenticado = loginService.verificarCredenciales(loginRequest.getUsername(), loginRequest.getPassword());
         
         if (esAutenticado) {
             // Si las credenciales son correctas, autenticamos al usuario

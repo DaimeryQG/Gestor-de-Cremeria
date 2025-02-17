@@ -1,18 +1,11 @@
 package com.back.back.model;
 
 import java.math.BigDecimal;
-import java.sql.Date;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "productos")
@@ -23,30 +16,43 @@ public class Producto {
     @Column(name = "producto_id")
     private Long productoId;
 
+    @NotNull
+    @Size(min = 3, max = 100)
     private String nombre;
+
+    @Size(max = 255)
     private String descripcion;
+
+    @NotNull
     private BigDecimal precio;
+
     private int stock;
 
+    /*
     @ManyToOne
-    @JoinColumn(name = "categoria_id")
+    @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 
     @ManyToOne
-    @JoinColumn(name = "proveedor_id")
+    @JoinColumn(name = "proveedor_id", nullable = false)
     private Proveedor proveedor;
+    */
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "fecha_registro", nullable = false, updatable = false)
-    private Date fechaRegistro;
+    private LocalDateTime fechaRegistro;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "fecha_caducidad", nullable = false)
-    private Date fechaCaducidad;
+    private LocalDate fechaCaducidad;
 
-    private int estado;  // 1 = Activo, 0 = Inactivo
+    @Column(name = "activo", nullable = false)
+    private boolean activo;
 
-    // Getters and setters
+    @PrePersist
+    protected void onCreate() {
+        this.fechaRegistro = LocalDateTime.now();
+    }
+
+    // Getters y Setters
     public Long getProductoId() {
         return productoId;
     }
@@ -87,6 +93,7 @@ public class Producto {
         this.stock = stock;
     }
 
+    /*
     public Categoria getCategoria() {
         return categoria;
     }
@@ -102,28 +109,29 @@ public class Producto {
     public void setProveedor(Proveedor proveedor) {
         this.proveedor = proveedor;
     }
+    */
 
-    public Date getFechaRegistro() {
+    public LocalDateTime getFechaRegistro() {
         return fechaRegistro;
     }
 
-    public void setFechaRegistro(Date fechaRegistro) {
+    public void setFechaRegistro(LocalDateTime fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
 
-    public Date getFechaCaducidad() {
+    public LocalDate getFechaCaducidad() {
         return fechaCaducidad;
     }
 
-    public void setFechaCaducidad(Date fechaCaducidad) {
+    public void setFechaCaducidad(LocalDate fechaCaducidad) {
         this.fechaCaducidad = fechaCaducidad;
     }
 
-    public int getEstado() {
-        return estado;
+    public boolean isActivo() {
+        return activo;
     }
 
-    public void setEstado(int estado) {
-        this.estado = estado;
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 }

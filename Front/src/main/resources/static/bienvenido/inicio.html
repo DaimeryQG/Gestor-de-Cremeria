@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Inicial</title>
+    
+    <!-- Enlace a Bootstrap CSS -->
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Enlace a Bootstrap Icons -->
+    <link href="/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Enlace a estilos personalizados -->
+    <link href="/css/styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="bg-primary text-white py-2">
+        <div class="container d-flex align-items-center">
+            <!-- Título, con espacio de flexión para centrar el texto -->
+            <h1 class="mb-0 flex-grow-1 text-center display-6 fw-bold">
+                Sistema de Control de Inventario
+            </h1>
+            <!-- Botón para abrir el menú deslizable, ahora a la derecha -->
+            <button class="btn btn-light d-flex align-items-center justify-content-center" id="menuButton"
+                aria-label="Abrir menú">
+                <i class="bi bi-three-dots-vertical fs-4" id="menuIcon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Menú deslizable desde la derecha -->
+    <div id="sidebar" class="position-fixed top-0 end-0 vh-100 bg-light shadow"
+        style="width: 200px; transform: translateX(100%); transition: transform 0.3s;">
+        <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+            <h5 class="mb-0">Menú</h5>
+            <button class="btn btn-close" id="closeSidebar" aria-label="Cerrar"></button>
+        </div>
+        <ul class="list-unstyled p-3">
+            <!-- Perfil -->
+            <li class="mb-4 text-center">
+                <i class="bi bi-person-circle fs-2"></i><br>
+                <span th:text="${nombreUsuario}">Nombre de Usuario</span>
+            </li>
+            <li><a href="#" class="menu-link" href="/view/bienvenido/Bienvenido.html">Inicio</a></li>
+            <li><a href="#" class="menu-link" href="/view/ventas/ventas.html">Ventas</a></li>
+            <li><a href="#" class="menu-link" href="/view/precios/precios.html">Precios</a></li>
+            <li><a href="#" class="menu-link" href="/view/productos/productos.html">Productos</a></li>
+            <li><a href="#" class="menu-link" href="/view/proveedores/proveedores.html">Proveedores</a></li>
+            <li><a href="#" class="menu-link" href="/view/mapa/mapa.html">Mapa</a></li>
+            <li><a href="#" class="menu-link" href="/view/estadisticas/estadisticas.html">Estadísticas</a></li>
+        </ul>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="container my-5">
+        <div id="DivDinamico">
+            <!-- Lista de usuarios con enlaces para ver detalles -->
+            <div class="list-group">
+                <!-- Enlace a la página de detalles de usuario 1 -->
+                <a href="/usuario_detalle.html?id=1" class="list-group-item list-group-item-action">
+                    Usuario 1
+                </a>
+                <!-- Enlace a la página de detalles de usuario 2 -->
+                <a href="/usuario_detalle.html?id=2" class="list-group-item list-group-item-action">
+                    Usuario 2
+                </a>
+                <!-- Enlace a la página de detalles de usuario 3 -->
+                <a href="/usuario_detalle.html?id=3" class="list-group-item list-group-item-action">
+                    Usuario 3
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts personalizados -->
+    <script src="/js/inicio.js"></script>
+    <script src="/js/menu.js"></script>
+</body>
+
+</html>

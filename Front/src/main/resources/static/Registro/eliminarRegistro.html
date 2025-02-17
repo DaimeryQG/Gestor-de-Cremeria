@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Usuario</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Detalles del Usuario</h2>
+        <form id="detailsForm">
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" class="form-control" disabled>
+            </div>
+            <div class="form-group">
+                <label for="correo">Correo</label>
+                <input type="email" id="correo" class="form-control" disabled>
+            </div>
+            <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input type="tel" id="telefono" class="form-control" disabled>
+            </div>
+            <div class="form-group">
+                <label for="direccion">Dirección</label>
+                <input type="text" id="direccion" class="form-control" disabled>
+            </div>
+            <div class="form-group">
+                <label for="rfc">RFC</label>
+                <input type="text" id="rfc" class="form-control" disabled>
+            </div>
+            <div class="form-group">
+                <label for="curp">CURP</label>
+                <input type="text" id="curp" class="form-control" disabled>
+            </div>
+            <div class="form-group">
+                <label for="pais">País</label>
+                <input type="text" id="pais" class="form-control" disabled>
+            </div>
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <input type="text" id="estado" class="form-control" disabled>
+            </div>
+            <div class="form-group">
+                <label for="fechaRegistro">Fecha de Registro</label>
+                <input type="text" id="fechaRegistro" class="form-control" disabled>
+            </div>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" class="form-control" disabled>
+            </div>
+            <div class="form-group">
+                <label for="rolNombre">Rol</label>
+                <input type="text" id="rolNombre" class="form-control" disabled>
+            </div>
+            <button type="button" id="deleteButton" class="btn btn-danger">Eliminar Usuario</button>
+        </form>
+        <a href="/Registro/buscarRegistro.html" class="btn btn-secondary mt-2">Cancelar</a>
+    </div>
+
+    <script src="/js/Registros/eliminarRegistro.js"></script>
+</body>
+</html>
