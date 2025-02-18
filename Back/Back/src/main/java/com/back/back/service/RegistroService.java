@@ -7,13 +7,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.back.back.model.Registro;
+import com.back.back.model.Rol;
 import com.back.back.repository.RegistroRepository;
+import com.back.back.repository.RolRepository;
+import com.back.back.service.RegistroService.ResourceNotFoundException;
 
 @Service
 public class RegistroService {
 
     @Autowired
     private RegistroRepository registroRepository; // Repositorio de Registro
+
+    @Autowired
+    private RolRepository rolRepository;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder; // 🔹 Inyectamos BCryptPasswordEncoder
@@ -51,6 +57,14 @@ public class RegistroService {
                 registro.setCurp(registroActualizado.getCurp());
                 registro.setPais(registroActualizado.getPais());
                 registro.setEstado(registroActualizado.getEstado());
+
+                // Actualización del Rol
+                if (registroActualizado.getRol() != null && registroActualizado.getRol().getId() != null) {
+                    Rol rol = rolRepository.findById(registroActualizado.getRol().getId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado con ID: " + registroActualizado.getRol().getId()));
+                    registro.setRol(rol);  // Asignamos el nuevo rol al registro
+        
+                }
                 return registroRepository.save(registro);
             })
             .orElseThrow(() -> new ResourceNotFoundException("Registro no encontrado con ID: " + id));

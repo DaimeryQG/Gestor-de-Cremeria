@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
         menuLinks.forEach(link => {
             link.addEventListener("click", event => {
                 event.preventDefault(); // Evitar la navegación
-                const target = link.getAttribute("data-target");
+                const target = link.getAttribute("data-target"); // Obtener el target
                 if (target) {
                     loadContent(target); // Cargar contenido dinámico
                 }

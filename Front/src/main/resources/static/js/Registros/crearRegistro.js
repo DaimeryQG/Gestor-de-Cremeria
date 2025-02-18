@@ -52,15 +52,18 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(response => {
             if (response.ok) {
-                alert("Registro creado exitosamente");
+                $('#successModal').modal('show'); 
                 createForm.reset(); // Limpiar el formulario después de crear el registro
+                document.getElementById("goHomeButton").addEventListener("click", function() {
+                    window.location.href = '/Registro/buscarRegistro.html'; // Redirigir a la página principal
+                });
             } else {
                 throw new Error("Error al crear el registro");
             }
         })
         .catch(error => {
             console.error("Error:", error);
-            alert("Hubo un problema al crear el registro");
+            $('#errorModal').modal('show');
         });
     });
 });

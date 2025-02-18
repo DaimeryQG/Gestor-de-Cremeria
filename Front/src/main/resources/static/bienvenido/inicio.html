@@ -43,35 +43,20 @@
                 <i class="bi bi-person-circle fs-2"></i><br>
                 <span th:text="${nombreUsuario}">Nombre de Usuario</span>
             </li>
-            <li><a href="#" class="menu-link" href="/view/bienvenido/Bienvenido.html">Inicio</a></li>
-            <li><a href="#" class="menu-link" href="/view/ventas/ventas.html">Ventas</a></li>
-            <li><a href="#" class="menu-link" href="/view/precios/precios.html">Precios</a></li>
-            <li><a href="#" class="menu-link" href="/view/productos/productos.html">Productos</a></li>
-            <li><a href="#" class="menu-link" href="/view/proveedores/proveedores.html">Proveedores</a></li>
-            <li><a href="#" class="menu-link" href="/view/mapa/mapa.html">Mapa</a></li>
-            <li><a href="#" class="menu-link" href="/view/estadisticas/estadisticas.html">Estadísticas</a></li>
+            <li><a href="#" class="menu-link" data-target="/view/bienvenido/Bienvenido.html">Inicio</a></li>
+            <li><a href="#" class="menu-link" data-target="/view/ventas/ventas.html">Ventas</a></li>
+            <li><a href="#" class="menu-link" data-target="/view/precios/precios.html">Precios</a></li>
+            <li><a href="#" class="menu-link" data-target="/view/productos/productos.html">Productos</a></li>
+            <li><a href="#" class="menu-link" data-target="/view/proveedores/proveedores.html">Proveedores</a></li>
+            <li><a href="#" class="menu-link" data-target="/view/mapa/mapa.html">Mapa</a></li>
+            <li><a href="#" class="menu-link" data-target="/view/estadisticas/estadisticas.html">Estadísticas</a></li>
+            <li><a href="/Registro/buscarRegistro.html">Usuarios</a></li>
         </ul>
     </div>
 
-    <!-- Contenido principal -->
-    <div class="container my-5">
-        <div id="DivDinamico">
-            <!-- Lista de usuarios con enlaces para ver detalles -->
-            <div class="list-group">
-                <!-- Enlace a la página de detalles de usuario 1 -->
-                <a href="/usuario_detalle.html?id=1" class="list-group-item list-group-item-action">
-                    Usuario 1
-                </a>
-                <!-- Enlace a la página de detalles de usuario 2 -->
-                <a href="/usuario_detalle.html?id=2" class="list-group-item list-group-item-action">
-                    Usuario 2
-                </a>
-                <!-- Enlace a la página de detalles de usuario 3 -->
-                <a href="/usuario_detalle.html?id=3" class="list-group-item list-group-item-action">
-                    Usuario 3
-                </a>
-            </div>
-        </div>
+    <!-- Div donde se carga el contenido dinámico -->
+    <div id="DivDinamico" class="container mt-4">
+        <!-- Aquí se cargará el contenido dinámicamente -->
     </div>
 
     <!-- Bootstrap JS -->

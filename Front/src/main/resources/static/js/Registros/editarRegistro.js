@@ -3,6 +3,7 @@ window.onload = function() {
     const usuario = JSON.parse(sessionStorage.getItem('usuarioParaEditar'));  // Recupera el usuario de sessionStorage
     
     if (usuario) {
+        console.log(usuario);
         // Rellenamos el formulario con los datos existentes
         document.getElementById('nombre').value = usuario.nombre || '';
         document.getElementById('correo').value = usuario.correo || '';
@@ -14,7 +15,11 @@ window.onload = function() {
         document.getElementById('estado').value = usuario.estado || 'No disponible';
         document.getElementById('fechaRegistro').value = usuario.fechaRegistro || 'No disponible';
         document.getElementById('username').value = usuario.username || 'No disponible';
-        document.getElementById('rolNombre').value = usuario.rolNombre || 'No disponible';
+        // Si el usuario tiene rol asignado, actualizamos el campo de selección de rol
+        if (usuario.rol && usuario.rol.id) {
+            const rolSelect = document.getElementById('rolNombre');
+            rolSelect.value = usuario.rol.id;  // Establece el valor del rol
+        }
     } else {
         alert("No se encontró el usuario en sesión.");
     }
@@ -37,7 +42,7 @@ document.getElementById('editForm').addEventListener('submit', function(event) {
         estado: document.getElementById('estado').value,
         fechaRegistro: usuario.fechaRegistro,  // Asumiendo que no deseas modificar esta propiedad
         username: usuario.username,  // Asumiendo que no deseas modificar esta propiedad
-        rolNombre: usuario.rolNombre  // Asumiendo que no deseas modificar esta propiedad
+        rol: { id: parseInt(document.getElementById('rolNombre').value) }
     };
 
     // Enviar la actualización al backend
@@ -55,12 +60,13 @@ document.getElementById('editForm').addEventListener('submit', function(event) {
         return response.json();
     })
     .then(data => {
-        alert('Registro actualizado con éxito');
-        // Redirige o haz algo con la respuesta
-        window.location.href = '/Registro/buscarRegistro.html';  // Redirige a una página de lista o donde desees
+        $('#successModal').modal('show');
+        setTimeout(function() {
+            window.location.href = '/Registro/buscarRegistro.html';  // Redirige a una página de lista o donde desees
+        }, 2000);  // Espera 2 segundos antes de redirigir
     })
     .catch(error => {
         console.error(error);
-        alert('Ocurrió un error al actualizar el registro');
+        $('#errorModal').modal('show');
     });
 });

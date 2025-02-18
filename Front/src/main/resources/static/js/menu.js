@@ -46,9 +46,10 @@ menuLinks.forEach(link => {
     link.addEventListener("click", event => {
         event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
         const target = link.getAttribute("data-target");
-        loadContent(target); // Cargar el archivo objetivo
+        console.log("Cargando contenido desde: " + target); // Verificar la ruta
+        loadContent(target); // Cargar el archivo objetivo en el div dinámico
     });
 });
 
 // Cargar contenido inicial por defecto
-loadContent("/bienvenido/inicio.html");
+loadContent("/bienvenido/Bienvenido.html");

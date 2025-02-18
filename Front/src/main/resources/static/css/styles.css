@@ -116,3 +116,11 @@ body {
   border-color: rgba(176, 190, 197, 0.7);
   cursor: not-allowed;
 }
+
+/* Estilos para el logo */
+.logo {
+  max-width: 100%;
+  height: auto;
+  width: 150px; /* Ajusta el tamaño según el diseño deseado */
+  margin-bottom: 20px;
+}

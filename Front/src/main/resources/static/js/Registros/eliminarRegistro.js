@@ -20,6 +20,12 @@ window.onload = function() {
 
     // Configurar la acción del botón de eliminación
     document.getElementById('deleteButton').onclick = function() {
+        // Mostrar el modal de confirmación
+        $('#deleteModal').modal('show');
+    };
+
+    // Confirmar eliminación en el modal
+    document.getElementById('confirmDeleteButton').onclick = function() {
         if (usuario) {
             fetch(`http://localhost:8081/registros/${usuario.id}`, {
                 method: 'DELETE',
@@ -38,6 +44,8 @@ window.onload = function() {
                 console.error(error);
                 alert('Ocurrió un error al eliminar el registro');
             });
+            // Cerrar el modal
+            $('#deleteModal').modal('hide');
         }
     };
 };
