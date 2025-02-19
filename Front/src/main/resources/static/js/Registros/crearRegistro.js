@@ -57,13 +57,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("goHomeButton").addEventListener("click", function() {
                     window.location.href = '/Registro/buscarRegistro.html'; // Redirigir a la página principal
                 });
+            } else if (response.status === 409) {  // Manejar el conflicto de duplicado
+                response.text().then(message => {
+                    mostrarModalError(message);  // Mostrar mensaje del backend
+                });
             } else {
                 throw new Error("Error al crear el registro");
             }
         })
         .catch(error => {
             console.error("Error:", error);
-            $('#errorModal').modal('show');
+            mostrarModalError("Hubo un problema al crear el registro.");
         });
     });
 });
+
+// Función para mostrar el modal de error con un mensaje dinámico
+function mostrarModalError(message) {
+    document.getElementById('modalErrorMessage').textContent = message || 'Ocurrió un error al realizar la operación.';
+    $('#errorModal').modal('show');
+}

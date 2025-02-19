@@ -9,7 +9,6 @@ document.getElementById('searchForm').addEventListener('submit', function(event)
         return;
     }
 
-    // Llamar a la función para buscar el registro con el parámetro adecuado
     buscarRegistro(searchOption, searchInput);
 });
 
@@ -18,12 +17,10 @@ document.getElementById('createButton').addEventListener('click', function() {
     window.location.href = '/Registro/crearRegistro.html'; // Redirige a la página de registro
 });
 
-
 function buscarRegistro(searchOption, searchInput) {
     let url = ''; 
     let bodyData = {};
 
-    // Dependiendo de la opción seleccionada, se arma la URL y los datos
     if (searchOption === 'nombre') {
         url = 'http://localhost:8081/registros/buscarPorNombre';
         bodyData = { nombre: searchInput };
@@ -35,16 +32,21 @@ function buscarRegistro(searchOption, searchInput) {
         bodyData = { curp: searchInput };
     }
 
+    // Limpiar resultados anteriores
+    document.getElementById('registroList').innerHTML = '';
+    document.getElementById('userList').style.display = 'none'; // Ocultar la lista de usuarios
+    document.getElementById('userDetails').style.display = 'none'; // Ocultar detalles del usuario
+    
     realizarBusqueda(url, bodyData)
         .then(data => {
-            if (!data || Object.keys(data).length === 0) {
+            if (!data || data.length === 0) {
                 throw new Error('No se encontró el registro.');
             }
-            mostrarDetallesUsuario(data);
-            document.getElementById('searchInput').value = '';  // Limpiar el valor del campo de búsqueda
+            mostrarListaUsuarios(data);
+            document.getElementById('searchInput').value = '';  // Limpiar el campo de búsqueda
         })
         .catch(error => {
-            mostrarModalError(error.message);  // Mostrar el modal de error
+            mostrarModalError(error.message);
         });
 }
 
@@ -61,9 +63,33 @@ function realizarBusqueda(url, bodyData) {
     });
 }
 
+function mostrarListaUsuarios(data) {
+    // Limpiar la lista previa si la hay
+    const registroList = document.getElementById('registroList');
+    registroList.innerHTML = '';
+
+    // Mostrar la sección de lista
+    document.getElementById('userList').style.display = 'block';
+    document.getElementById('userDetails').style.display = 'none'; // Ocultar detalles previos si están abiertos
+
+    data.forEach(registro => {
+        const listItem = document.createElement('li');
+        listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+        listItem.innerHTML = `
+            <span><strong>Nombre:</strong> ${registro.nombre || 'No disponible'}</span>
+            <button class="btn btn-sm btn-info ver-detalles-btn">Ver Detalles</button>
+        `;
+
+        listItem.querySelector('.ver-detalles-btn').addEventListener('click', () => {
+            mostrarDetallesUsuario(registro);
+        });
+
+        registroList.appendChild(listItem);
+    });
+}
+
 function mostrarDetallesUsuario(data) {
-    // Asegurarse de que los datos del usuario se muestren en el formato adecuado
-    console.log(data);
     document.getElementById('userDetails').style.display = 'block';
     document.getElementById('nombre').textContent = data.nombre || 'No disponible';
     document.getElementById('correo').textContent = data.correo || 'No disponible';
@@ -75,29 +101,20 @@ function mostrarDetallesUsuario(data) {
     document.getElementById('estado').textContent = data.estado || 'No disponible';
     document.getElementById('fechaRegistro').textContent = data.fechaRegistro || 'No disponible';
     document.getElementById('username').textContent = data.username || 'No disponible';
-    document.getElementById('rolNombre').textContent = data.rolNombre|| 'No disponible';
+    document.getElementById('rolNombre').textContent = data.rolNombre || 'No disponible';
 
-    // Configura el evento del botón "Actualizar"
     document.getElementById('updateButton').onclick = () => {
-        // Guarda los datos en sessionStorage
         sessionStorage.setItem('usuarioParaEditar', JSON.stringify(data));
-
-        // Redirige a la página de edición
         window.location.href = '/Registro/editarRegistro.html';
     };
 
-    // Configura el evento del botón "Eliminar"
     document.getElementById('deleteButton').onclick = () => {
-        // Guarda los datos en sessionStorage
         sessionStorage.setItem('usuarioParaEliminar', JSON.stringify(data));
-
-        // Redirige a la página de edición
         window.location.href = '/Registro/eliminarRegistro.html';
     };
 }
 
 function mostrarModalError(message) {
-    // Mostrar el modal de error con el mensaje
     document.getElementById('modalErrorMessage').textContent = message || 'Ocurrió un error al realizar la búsqueda.';
     $('#errorModal').modal('show');
 }

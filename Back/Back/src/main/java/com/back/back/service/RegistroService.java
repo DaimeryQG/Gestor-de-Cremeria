@@ -83,7 +83,7 @@ public class RegistroService {
         }
     }
 
-    public Registro buscarPorNombre(String nombre) {
+    public List<Registro> buscarPorNombre(String nombre) {
         return registroRepository.findByNombre(nombre);
     }
 
@@ -94,6 +94,25 @@ public class RegistroService {
     public Registro buscarPorRfc(String rfc) {
         return registroRepository.findByRfc(rfc);
     } 
+
+    public boolean existeRegistroPorRfcOCurp(String rfc, String curp) {
+        return registroRepository.existsByRfcOrCurp(rfc, curp);
+    }
+
+    public void desactivar(Long id) {
+        Registro registro = registroRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Registro no encontrado con ID: " + id));
+        registro.setActivo(false);  // Desactiva el registro
+        registroRepository.save(registro);  // Guarda los cambios en la base de datos
+    }
+
+    public void activar(Long id) {
+        Registro registro = registroRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Registro no encontrado con ID: " + id));
+    
+        registro.setActivo(true);  // Activamos el registro
+        registroRepository.save(registro);
+    }
 }
 
 
