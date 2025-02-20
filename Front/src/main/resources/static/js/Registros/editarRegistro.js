@@ -1,7 +1,7 @@
 // Al cargar la página, obtenemos el usuario de sessionStorage y lo mostramos en el formulario
 window.onload = function() {
     const usuario = JSON.parse(sessionStorage.getItem('usuarioParaEditar'));  // Recupera el usuario de sessionStorage
-    
+
     if (usuario) {
         console.log(usuario);
         // Rellenamos el formulario con los datos existentes
@@ -15,6 +15,7 @@ window.onload = function() {
         document.getElementById('estado').value = usuario.estado || 'No disponible';
         document.getElementById('fechaRegistro').value = usuario.fechaRegistro || 'No disponible';
         document.getElementById('username').value = usuario.username || 'No disponible';
+
         // Si el usuario tiene rol asignado, actualizamos el campo de selección de rol
         if (usuario.rol && usuario.rol.id) {
             const rolSelect = document.getElementById('rolNombre');
@@ -25,6 +26,7 @@ window.onload = function() {
     }
 };
 
+// Manejo del formulario
 document.getElementById('editForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -40,10 +42,12 @@ document.getElementById('editForm').addEventListener('submit', function(event) {
         curp: document.getElementById('curp').value,
         pais: document.getElementById('pais').value,
         estado: document.getElementById('estado').value,
-        fechaRegistro: usuario.fechaRegistro,  // Asumiendo que no deseas modificar esta propiedad
-        username: usuario.username,  // Asumiendo que no deseas modificar esta propiedad
+        fechaRegistro: usuario.fechaRegistro,  // No se modifica
+        username: usuario.username,  // No se modifica
         rol: { id: parseInt(document.getElementById('rolNombre').value) }
     };
+
+    console.log("Datos enviados al backend:", updatedData);  // Debug para verificar datos enviados
 
     // Enviar la actualización al backend
     fetch(`http://localhost:8081/registros/${usuario.id}`, {
@@ -53,20 +57,34 @@ document.getElementById('editForm').addEventListener('submit', function(event) {
         },
         body: JSON.stringify(updatedData),
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Error al actualizar el registro');
+    .then(response => response.json().then(data => ({ status: response.status, body: data })))
+    .then(({ status, body }) => {
+        console.log("Código de respuesta:", status);
+        console.log("Respuesta del servidor:", body);
+
+        if (status >= 400) {
+            throw new Error(body.error || 'Error al actualizar el registro.');
         }
-        return response.json();
-    })
-    .then(data => {
+
+        // Si la actualización fue exitosa, muestra el mensaje en el modal de éxito
+        document.querySelector('#successModal .modal-body').textContent = body.mensaje || 'Registro actualizado correctamente.';
         $('#successModal').modal('show');
-        setTimeout(function() {
-            window.location.href = '/Registro/buscarRegistro.html';  // Redirige a una página de lista o donde desees
-        }, 2000);  // Espera 2 segundos antes de redirigir
+
+        // Redirige cuando el modal se cierra
+        $('#successModal').on('hidden.bs.modal', function () {
+            window.location.href = '/Registro/buscarRegistro.html';
+        });
+
+        // Cierra el modal automáticamente después de 2 segundos
+        setTimeout(() => {
+            $('#successModal').modal('hide');
+        }, 2000);
     })
     .catch(error => {
-        console.error(error);
+        console.error("Error durante la actualización:", error);
+
+        // Muestra el mensaje de error en el modal
+        document.querySelector('#errorModal .modal-body').textContent = error.message || 'Ocurrió un error al actualizar.';
         $('#errorModal').modal('show');
     });
 });

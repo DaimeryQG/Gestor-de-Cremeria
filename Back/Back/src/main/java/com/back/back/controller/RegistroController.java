@@ -1,5 +1,6 @@
 package com.back.back.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,14 +49,13 @@ public class RegistroController {
     public ResponseEntity<List<RegistroDTO>> buscarPorNombre(@RequestBody Map<String, String> params) {
         String nombre = params.get("nombre");
         List<Registro> registro = registroService.buscarPorNombre(nombre);
-        if (registro == null) {
+        if (registro == null || registro.isEmpty()) {
             return ResponseEntity.notFound().build(); // Si no se encuentran registros, devuelve 404
         }
-        // Convertir la lista de registros a una lista de DTOs
         List<RegistroDTO> registroDTO = registro.stream()
                 .map(RegistroMapper::toDTO)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(registroDTO); // Si se encuentra el registro, devuelve 200 OK
+        return ResponseEntity.ok(registroDTO); // 200 OK
     }
 
     // Buscar registro por CURP
@@ -64,10 +64,10 @@ public class RegistroController {
         String curp = params.get("curp");
         Registro registro = registroService.buscarPorCurp(curp);
         if (registro == null) {
-            return ResponseEntity.notFound().build(); // Si no se encuentran registros, devuelve 404
+            return ResponseEntity.notFound().build(); // 404
         }
-        RegistroDTO registroDTO = RegistroMapper.toDTO(registro); // Convertir a DTO
-        return ResponseEntity.ok(registroDTO); // Si se encuentra el registro, devuelve 200 OK
+        RegistroDTO registroDTO = RegistroMapper.toDTO(registro);
+        return ResponseEntity.ok(registroDTO); // 200 OK
     }
 
     // Buscar registro por RFC
@@ -76,86 +76,112 @@ public class RegistroController {
         String rfc = params.get("rfc");
         Registro registro = registroService.buscarPorRfc(rfc);
         if (registro == null) {
-            return ResponseEntity.notFound().build(); // Si no se encuentra el registro, devuelve 404
+            return ResponseEntity.notFound().build(); // 404
         }
-        RegistroDTO registroDTO = RegistroMapper.toDTO(registro); // Convertir a DTO
-        return ResponseEntity.ok(registroDTO); // Si se encuentra el registro, devuelve 200 OK
+        RegistroDTO registroDTO = RegistroMapper.toDTO(registro);
+        return ResponseEntity.ok(registroDTO); // 200 OK
     }
 
     // Registrar un nuevo usuario
     @PostMapping("/registrar")
-    public ResponseEntity<String> registrar(@RequestBody Registro registro) {
-        // Validar si ya existe un registro con el mismo RFC o CURP
+    public ResponseEntity<Map<String, String>> registrar(@RequestBody Registro registro) {
+        Map<String, String> response = new HashMap<>();
+
         boolean existe = registroService.existeRegistroPorRfcOCurp(registro.getRfc(), registro.getCurp());
 
         if (existe) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Ya existe un registro con el mismo RFC o CURP.");
+            response.put("error", "Ya existe un registro con el mismo RFC o CURP.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
 
-        // Si no existe, registrar el nuevo usuario
-        Registro nuevoRegistro = registroService.registrar(registro);
-        return ResponseEntity.ok("Registro creado exitosamente.");
+        registroService.registrar(registro);
+        response.put("mensaje", "Registro creado exitosamente.");
+        return ResponseEntity.ok(response);
     }
 
-    // Actualizar registro
+    // ✅ Actualizar registro con estructura uniforme
     @PutMapping("/{id}")
-    public ResponseEntity<String> actualizar(@PathVariable Long id, @RequestBody Registro registro) {
+    public ResponseEntity<Map<String, String>> actualizar(@PathVariable Long id, @RequestBody Registro registro) {
+        Map<String, String> response = new HashMap<>();
         try {
-            // Verificamos si el registro está desactivado
             Registro registroExistente = registroService.obtenerPorId(id);
-            if (registroExistente != null && !registroExistente.isActivo()) {
-                // Si está desactivado, no se permite la actualización
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body("El registro está desactivado y no puede ser actualizado.");
+
+            if (registroExistente == null) {
+                response.put("error", "Registro no encontrado.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
 
-            // Si está activo, procedemos a actualizar
-            Registro registroActualizado = registroService.actualizar(id, registro);
-            return ResponseEntity.ok("Registro actualizado correctamente.");
-        } catch (RegistroService.ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Registro no encontrado.");
+            if (!registroExistente.isActivo()) {
+                response.put("error", "El registro está desactivado y no puede ser actualizado.");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            }
+
+            registroService.actualizar(id, registro);
+            response.put("mensaje", "Registro actualizado correctamente.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("error", "Ocurrió un error al actualizar el registro.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
     // Eliminar un registro
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> eliminar(@PathVariable Long id) {
+        Map<String, String> response = new HashMap<>();
         try {
-            // Verificamos si el registro está desactivado
             Registro registroExistente = registroService.obtenerPorId(id);
-            if (registroExistente != null && !registroExistente.isActivo()) {
-                // Si está desactivado, no se permite la eliminación
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body("El registro está desactivado y no puede ser eliminado.");
+
+            if (registroExistente == null) {
+                response.put("error", "Registro no encontrado.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
 
-            // Si está activo, procedemos a eliminar
+            if (!registroExistente.isActivo()) {
+                response.put("error", "El registro está desactivado y no puede ser eliminado.");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            }
+
             registroService.eliminar(id);
-            return ResponseEntity.ok("Registro eliminado correctamente.");
-        } catch (RegistroService.ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Registro no encontrado.");
+            response.put("mensaje", "Registro eliminado correctamente.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("error", "Ocurrió un error al eliminar el registro.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
     // Desactivar un registro
     @PutMapping("/desactivar/{id}")
-    public ResponseEntity<String> desactivarUsuario(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> desactivarUsuario(@PathVariable Long id) {
+        Map<String, String> response = new HashMap<>();
         try {
-            registroService.desactivar(id); // Llamamos al servicio para desactivar al usuario
-            return ResponseEntity.ok("Usuario desactivado correctamente.");
+            registroService.desactivar(id);
+            response.put("mensaje", "Usuario desactivado correctamente.");
+            return ResponseEntity.ok(response);
         } catch (RegistroService.ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
+            response.put("error", "Usuario no encontrado.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception e) {
+            response.put("error", "Error al desactivar el usuario.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
     // Activar un registro
     @PutMapping("/activar/{id}")
-    public ResponseEntity<String> activarUsuario(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> activarUsuario(@PathVariable Long id) {
+        Map<String, String> response = new HashMap<>();
         try {
-            registroService.activar(id); // Llamamos al servicio para activar al usuario
-            return ResponseEntity.ok("Usuario activado correctamente.");
+            registroService.activar(id);
+            response.put("mensaje", "Usuario activado correctamente.");
+            return ResponseEntity.ok(response);
         } catch (RegistroService.ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
+            response.put("error", "Usuario no encontrado.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception e) {
+            response.put("error", "Error al activar el usuario.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 }

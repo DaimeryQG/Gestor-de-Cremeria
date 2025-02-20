@@ -23,20 +23,14 @@ window.onload = function () {
                     'Content-Type': 'application/json',
                 },
             })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error al activar el usuario');
-                    }
-                    return response.text();
-                })
-                .then(message => {
-                    alert(message);
-                    actualizarBotones(true); // Actualiza estado de los botones
-                })
-                .catch(error => {
-                    console.error(error);
-                    alert('Ocurrió un error al activar el usuario');
-                });
+            .then(response => response.json())
+            .then(data => {
+                mostrarMensaje(data.mensaje || 'Usuario activado con éxito.');
+                actualizarBotones(true); // Actualiza estado de los botones
+            })
+            .catch(error => {
+                mostrarMensaje(error.message || 'Ocurrió un error al activar el usuario');
+            });
         };
 
         // Manejar Desactivar
@@ -47,73 +41,70 @@ window.onload = function () {
                     'Content-Type': 'application/json',
                 },
             })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error al desactivar el usuario');
-                    }
-                    return response.text();
-                })
-                .then(message => {
-                    alert(message);
-                    actualizarBotones(false); // Actualiza estado de los botones
-                })
-                .catch(error => {
-                    console.error(error);
-                    alert('Ocurrió un error al desactivar el usuario');
-                });
+            .then(response => response.json())
+            .then(data => {
+                mostrarMensaje(data.mensaje || 'Usuario desactivado con éxito.');
+                actualizarBotones(false); // Actualiza estado de los botones
+            })
+            .catch(error => {
+                mostrarMensaje(error.message || 'Ocurrió un error al desactivar el usuario');
+            });
         };
 
-        // Función para actualizar los botones según el estado
-        function actualizarBotones(isActive) {
-            const activarButton = document.getElementById('activarButton');
-            const desactivarButton = document.getElementById('desactivarButton');
+        // Configurar la acción del botón de eliminación
+        document.getElementById('deleteButton').onclick = function () {
+            $('#deleteModal').modal('show');
+        };
 
-            if (isActive) {
-                activarButton.classList.add('btn-success');
-                activarButton.classList.remove('btn-outline-success');
-                desactivarButton.classList.add('btn-outline-secondary');
-                desactivarButton.classList.remove('btn-secondary');
-            } else {
-                activarButton.classList.add('btn-outline-success');
-                activarButton.classList.remove('btn-success');
-                desactivarButton.classList.add('btn-secondary');
-                desactivarButton.classList.remove('btn-outline-secondary');
-            }
-        }
-
-        // Inicializar botones según el estado del usuario
-        actualizarBotones(usuario.activo);
-
-    } else {
-        alert("No se encontró el usuario en sesión.");
-    }
-
-    // Configurar la acción del botón de eliminación
-    document.getElementById('deleteButton').onclick = function () {
-        $('#deleteModal').modal('show');
-    };
-
-    // Confirmar eliminación en el modal
-    document.getElementById('confirmDeleteButton').onclick = function () {
-        if (usuario) {
+        // Confirmar eliminación en el modal
+        document.getElementById('confirmDeleteButton').onclick = function () {
             fetch(`http://localhost:8081/registros/${usuario.id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
             })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error al eliminar el registro');
-                    }
-                    alert('Usuario eliminado con éxito');
+            .then(response => response.json())
+            .then(data => {
+                mostrarMensaje(data.mensaje || 'Usuario eliminado con éxito.');
+                setTimeout(() => {
                     window.location.href = '/Registro/buscarRegistro.html';
-                })
-                .catch(error => {
-                    console.error(error);
-                    alert('Ocurrió un error al eliminar el registro');
-                });
+                }, 2000);
+            })
+            .catch(error => {
+                mostrarMensaje(error.message || 'Ocurrió un error al eliminar el registro');
+            });
             $('#deleteModal').modal('hide');
+        };
+
+        // Inicializar botones según el estado del usuario
+        actualizarBotones(usuario.activo);
+
+    } else {
+        mostrarMensaje("No se encontró el usuario en sesión.");
+    }
+
+    // Función para actualizar los botones según el estado
+    function actualizarBotones(isActive) {
+        const activarButton = document.getElementById('activarButton');
+        const desactivarButton = document.getElementById('desactivarButton');
+
+        if (isActive) {
+            activarButton.classList.add('btn-success');
+            activarButton.classList.remove('btn-outline-success');
+            desactivarButton.classList.add('btn-outline-secondary');
+            desactivarButton.classList.remove('btn-secondary');
+        } else {
+            activarButton.classList.add('btn-outline-success');
+            activarButton.classList.remove('btn-success');
+            desactivarButton.classList.add('btn-secondary');
+            desactivarButton.classList.remove('btn-outline-secondary');
         }
-    };
+    }
+
+    // Función para mostrar mensajes en el modal
+    function mostrarMensaje(mensaje) {
+        document.getElementById('messageModalBody').textContent = mensaje;
+        $('#messageModal').modal('show');
+    }
 };
