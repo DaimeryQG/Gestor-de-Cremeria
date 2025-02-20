@@ -6,16 +6,17 @@
     <title>Buscar Registro</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para íconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <!-- Tu archivo CSS personalizado -->
-    <link rel="stylesheet" href="/css/styles.css"> <!-- Cambiado a "style.css" -->
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
     <div class="container mt-5">
         <div class="form-container p-4 border rounded shadow-sm">
-            <h2 class="text-center mb-4">Buscar Registro</h2>
-            <form id="searchForm" class="d-flex justify-content-between">
-                <!-- Selector para elegir la opción de búsqueda -->
-                <div class="form-group mr-2">
+            <h2 class="text-center mb-4 title">Buscar Registro</h2>
+            <form id="searchForm" class="d-flex flex-wrap justify-content-between">
+                <div class="form-group flex-grow-1 mr-2">
                     <label for="searchOption">Buscar por:</label>
                     <select id="searchOption" class="form-control">
                         <option value="nombre">Nombre</option>
@@ -24,66 +25,66 @@
                     </select>
                 </div>
 
-                <!-- Campo de entrada para el valor de búsqueda -->
-                <div class="form-group mr-2">
+                <div class="form-group flex-grow-2 mr-2">
+                    <label for="searchInput">Término:</label>
                     <input type="text" id="searchInput" class="form-control" placeholder="Ingrese el valor" required>
                 </div>
 
-                <!-- Botones -->
-                <div class="form-group ml-2 d-flex align-items-center">
-                    <button type="submit" class="btn btn-primary">Buscar</button>
-                    <!-- Botón de Crear que redirige a otro HTML -->
-                    <button type="button" class="btn btn-success ml-2" id="createButton">Crear</button>
+                <div class="form-group d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary mr-2"><i class="fas fa-search"></i> Buscar</button>
+                    <button type="button" class="btn btn-success" id="createButton"><i class="fas fa-plus"></i> Crear</button>
                 </div>
             </form>
         </div>
 
-        <!-- Detalles del usuario -->
         <div id="userDetails" class="details-container mt-4 p-4 border rounded shadow-sm" style="display: none;">
-            <h3>Detalles del Registro</h3>
-            <p class="detail-item"><strong>Nombre:</strong> <span id="nombre"></span></p>
-            <p class="detail-item"><strong>Correo:</strong> <span id="correo"></span></p>
-            <p class="detail-item"><strong>Teléfono:</strong> <span id="telefono"></span></p>
-            <p class="detail-item"><strong>Dirección:</strong> <span id="direccion"></span></p>
-            <p class="detail-item"><strong>RFC:</strong> <span id="rfc"></span></p>
-            <p class="detail-item"><strong>CURP:</strong> <span id="curp"></span></p>
-            <p class="detail-item"><strong>País:</strong> <span id="pais"></span></p>
-            <p class="detail-item"><strong>Estado:</strong> <span id="estado"></span></p>
-            <p class="detail-item"><strong>Fecha de Registro:</strong> <span id="fechaRegistro"></span></p>
-            <p class="detail-item"><strong>Username:</strong> <span id="username"></span></p>
-            <p class="detail-item"><strong>Rol:</strong> <span id="rolNombre"></span></p>
-
-            <div class="button-group mt-3 d-flex justify-content-between">
-                <button id="updateButton" class="btn btn-primary">Actualizar</button>
-                <button id="deleteButton" class="btn btn-danger">Eliminar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de error -->
-    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="errorModalLabel">Error de Búsqueda</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+            <h3 class="mb-3 title">Detalles del Registro</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Nombre:</strong> <span id="nombre"></span></p>
+                    <p><strong>Correo:</strong> <span id="correo"></span></p>
+                    <p><strong>Teléfono:</strong> <span id="telefono"></span></p>
+                    <p><strong>Dirección:</strong> <span id="direccion"></span></p>
+                    <p><strong>RFC:</strong> <span id="rfc"></span></p>
                 </div>
-                <div class="modal-body">
-                    <p>Por favor, ingrese un término de búsqueda válido.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <div class="col-md-6">
+                    <p><strong>CURP:</strong> <span id="curp"></span></p>
+                    <p><strong>País:</strong> <span id="pais"></span></p>
+                    <p><strong>Estado:</strong> <span id="estado"></span></p>
+                    <p><strong>Fecha de Registro:</strong> <span id="fechaRegistro"></span></p>
+                    <p><strong>Username:</strong> <span id="username"></span></p>
+                    <p><strong>Rol:</strong> <span id="rolNombre"></span></p>
                 </div>
             </div>
+            <div class="button-group mt-3">
+                <button id="updateButton" class="btn btn-primary"><i class="fas fa-edit"></i> Actualizar</button>
+                <button id="deleteButton" class="btn btn-danger"><i class="fas fa-trash"></i> Eliminar</button>
+            </div>
         </div>
-    </div>
 
-    <!-- Sección para mostrar múltiples registros -->
-    <div id="userList" class="list-container mt-4 p-4 border rounded shadow-sm" style="display: none;">
-        <h3>Registros encontrados</h3>
-        <ul id="registroList" class="list-group"></ul>
+        <div id="userList" class="list-container mt-4 p-4 border rounded shadow-sm" style="display: none;">
+            <h3 class="title">Registros encontrados</h3>
+            <ul id="registroList" class="list-group"></ul>
+        </div>
+
+        <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="errorModalLabel">Error de Búsqueda</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Por favor, ingrese un término de búsqueda válido.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Bootstrap JS y dependencias -->
@@ -92,6 +93,5 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Tu script personalizado -->
     <script src="/js/Registros/buscarRegistro.js"></script>
-    
 </body>
 </html>

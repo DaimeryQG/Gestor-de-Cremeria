@@ -54,7 +54,12 @@
                 <label for="rolNombre">Rol</label>
                 <input type="text" id="rolNombre" class="form-control" disabled>
             </div>
-            <button type="button" id="deleteButton" class="btn btn-danger">Eliminar Usuario</button>
+
+            <!-- Botones Activar/Desactivar -->
+            <button type="button" id="activarButton" class="btn btn-success">Activar</button>
+            <button type="button" id="desactivarButton" class="btn btn-secondary">Desactivar</button>
+
+            <button type="button" id="deleteButton" class="btn btn-danger mt-2">Eliminar Usuario</button>
         </form>
         <a href="/Registro/buscarRegistro.html" class="btn btn-secondary mt-2">Cancelar</a>
     </div>
@@ -80,10 +85,10 @@
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="/js/Registros/eliminarRegistro.js"></script>
-
 </body>
 </html>
