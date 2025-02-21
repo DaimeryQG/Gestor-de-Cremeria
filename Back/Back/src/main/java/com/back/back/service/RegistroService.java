@@ -58,6 +58,10 @@ public class RegistroService {
                 registro.setPais(registroActualizado.getPais());
                 registro.setEstado(registroActualizado.getEstado());
 
+                if (registroActualizado.getPassword() != null && !registroActualizado.getPassword().isEmpty()) {
+                    registro.setPassword(passwordEncoder.encode(registroActualizado.getPassword()));
+                }
+                
                 // Actualización del Rol
                 if (registroActualizado.getRol() != null && registroActualizado.getRol().getId() != null) {
                     Rol rol = rolRepository.findById(registroActualizado.getRol().getId())

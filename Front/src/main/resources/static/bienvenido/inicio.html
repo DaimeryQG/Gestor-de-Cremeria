@@ -5,24 +5,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página Inicial</title>
-    
+
     <!-- Enlace a Bootstrap CSS -->
     <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Enlace a Bootstrap Icons -->
     <link href="/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Enlace a estilos personalizados -->
     <link href="/css/styles.css" rel="stylesheet">
+
+    <style>
+        /* Ajustes para el sidebar */
+        #sidebar {
+            width: 250px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 1050;
+        }
+
+        #sidebar.show {
+            transform: translateX(0);
+        }
+
+        /* Oscurecer el fondo cuando el menú está abierto */
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1040;
+        }
+
+        #overlay.active {
+            display: block;
+        }
+
+        /* Ajustes de la cabecera */
+        header h1 {
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Mejorar la apariencia del botón del menú */
+        #menuButton {
+            border: none;
+        }
+
+        /* Mejora para el contenido dinámico */
+        #DivDinamico {
+            min-height: 500px;
+        }
+    </style>
 </head>
 
 <body>
+
+    <!-- Overlay para el fondo al abrir el sidebar -->
+    <div id="overlay"></div>
+
     <!-- Header -->
     <header class="bg-primary text-white py-2">
         <div class="container d-flex align-items-center">
-            <!-- Título, con espacio de flexión para centrar el texto -->
             <h1 class="mb-0 flex-grow-1 text-center display-6 fw-bold">
                 Sistema de Control de Inventario
             </h1>
-            <!-- Botón para abrir el menú deslizable, ahora a la derecha -->
             <button class="btn btn-light d-flex align-items-center justify-content-center" id="menuButton"
                 aria-label="Abrir menú">
                 <i class="bi bi-three-dots-vertical fs-4" id="menuIcon"></i>
@@ -31,17 +79,15 @@
     </header>
 
     <!-- Menú deslizable desde la derecha -->
-    <div id="sidebar" class="position-fixed top-0 end-0 vh-100 bg-light shadow"
-        style="width: 200px; transform: translateX(100%); transition: transform 0.3s;">
+    <div id="sidebar" class="position-fixed top-0 end-0 vh-100 bg-light shadow">
         <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
             <h5 class="mb-0">Menú</h5>
             <button class="btn btn-close" id="closeSidebar" aria-label="Cerrar"></button>
         </div>
         <ul class="list-unstyled p-3">
-            <!-- Perfil -->
             <li class="mb-4 text-center">
                 <i class="bi bi-person-circle fs-2"></i><br>
-                <span th:text="${nombreUsuario}">Nombre de Usuario</span>
+                <span id="nombreUsuario">Nombre de Usuario</span>
             </li>
             <li><a href="#" class="menu-link" data-target="/view/bienvenido/Bienvenido.html">Inicio</a></li>
             <li><a href="#" class="menu-link" data-target="/view/ventas/ventas.html">Ventas</a></li>
@@ -57,11 +103,11 @@
     <!-- Div donde se carga el contenido dinámico -->
     <div id="DivDinamico" class="container mt-4">
         <!-- Aquí se cargará el contenido dinámicamente -->
+        <h2 class="text-center">Bienvenido al Sistema de Control de Inventario</h2>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Scripts personalizados -->
     <script src="/js/inicio.js"></script>
     <script src="/js/menu.js"></script>
 </body>

@@ -1,12 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Seleccionar el formulario
     const createForm = document.getElementById("createForm");
 
-    // Manejar el evento de envío del formulario
     createForm.addEventListener("submit", function (e) {
-        e.preventDefault(); // Prevenir el comportamiento predeterminado del formulario
+        e.preventDefault();
 
-        // Obtener los valores de los campos del formulario
         const nombre = document.getElementById("nombre").value;
         const correo = document.getElementById("correo").value;
         const telefono = document.getElementById("telefono").value;
@@ -20,13 +17,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const password = document.getElementById("password").value;
         const rol = { id: parseInt(document.getElementById("rol").value) };
 
-        // Validar campos requeridos
         if (!nombre || !correo || !fechaRegistro || !username || !password) {
             alert("Por favor, complete todos los campos obligatorios.");
             return;
         }
 
-        // Crear un objeto con los datos del formulario
         const registro = {
             nombre,
             correo,
@@ -42,25 +37,20 @@ document.addEventListener("DOMContentLoaded", function () {
             rol
         };
 
-        // Enviar una solicitud POST al backend para crear el registro
         fetch("http://localhost:8081/registros/registrar", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(registro)
         })
         .then(response => {
             if (response.ok) {
-                $('#successModal').modal('show'); 
-                createForm.reset(); // Limpiar el formulario después de crear el registro
-                document.getElementById("goHomeButton").addEventListener("click", function() {
-                    window.location.href = '/Registro/buscarRegistro.html'; // Redirigir a la página principal
+                $('#successModal').modal('show');
+                createForm.reset();
+                document.getElementById("goHomeButton").addEventListener("click", function () {
+                    window.location.href = '/Registro/buscarRegistro.html';
                 });
-            } else if (response.status === 409) {  // Manejar el conflicto de duplicado
-                response.text().then(message => {
-                    mostrarModalError(message);  // Mostrar mensaje del backend
-                });
+            } else if (response.status === 409) {
+                response.text().then(message => mostrarModalError(message));
             } else {
                 throw new Error("Error al crear el registro");
             }
@@ -72,7 +62,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// Función para mostrar el modal de error con un mensaje dinámico
 function mostrarModalError(message) {
     document.getElementById('modalErrorMessage').textContent = message || 'Ocurrió un error al realizar la operación.';
     $('#errorModal').modal('show');

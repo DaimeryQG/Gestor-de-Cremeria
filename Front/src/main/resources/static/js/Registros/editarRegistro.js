@@ -1,39 +1,65 @@
-// Al cargar la página, obtenemos el usuario de sessionStorage y lo mostramos en el formulario
+// Al cargar la página
 window.onload = function() {
-    const usuario = JSON.parse(sessionStorage.getItem('usuarioParaEditar'));  // Recupera el usuario de sessionStorage
+    const usuario = JSON.parse(sessionStorage.getItem('usuarioParaEditar'));
 
     if (usuario) {
-        console.log(usuario);
-        // Rellenamos el formulario con los datos existentes
         document.getElementById('nombre').value = usuario.nombre || '';
         document.getElementById('correo').value = usuario.correo || '';
         document.getElementById('telefono').value = usuario.telefono || '';
         document.getElementById('direccion').value = usuario.direccion || '';
-        document.getElementById('rfc').value = usuario.rfc || 'No disponible';
-        document.getElementById('curp').value = usuario.curp || 'No disponible';
-        document.getElementById('pais').value = usuario.pais || 'No disponible';
-        document.getElementById('estado').value = usuario.estado || 'No disponible';
-        document.getElementById('fechaRegistro').value = usuario.fechaRegistro || 'No disponible';
-        document.getElementById('username').value = usuario.username || 'No disponible';
+        document.getElementById('rfc').value = usuario.rfc || '';
+        document.getElementById('curp').value = usuario.curp || '';
+        document.getElementById('pais').value = usuario.pais || '';
+        document.getElementById('estado').value = usuario.estado || '';
+        document.getElementById('fechaRegistro').value = usuario.fechaRegistro || '';
+        document.getElementById('username').value = usuario.username || '';
+        document.getElementById('password').value = '';
 
-        // Si el usuario tiene rol asignado, actualizamos el campo de selección de rol
         if (usuario.rol && usuario.rol.id) {
-            const rolSelect = document.getElementById('rolNombre');
-            rolSelect.value = usuario.rol.id;  // Establece el valor del rol
+            document.getElementById('rolNombre').value = usuario.rol.id;
+        }
+
+        // Mostrar "****" si la contraseña está vacía
+        const passwordField = document.getElementById('password');
+        if (!usuario.password) {
+            passwordField.placeholder = '****';
         }
     } else {
         alert("No se encontró el usuario en sesión.");
     }
+
+    // Lógica para el campo de contraseña
+    const passwordField = document.getElementById('password');
+
+    passwordField.addEventListener('focus', function() {
+        if (passwordField.placeholder === '****') {
+            passwordField.placeholder = '';
+        }
+    });
+
+    passwordField.addEventListener('blur', function() {
+        if (passwordField.value.trim() === '') {
+            passwordField.placeholder = '****';
+        }
+    });
 };
 
 // Manejo del formulario
 document.getElementById('editForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    const usuario = JSON.parse(sessionStorage.getItem('usuarioParaEditar'));  // Recupera el usuario de sessionStorage
+    const usuario = JSON.parse(sessionStorage.getItem('usuarioParaEditar'));
+    const password = document.getElementById('password').value.trim();
+
+    // Validación del campo de contraseña
+    if (password === '') {
+        $('#errorModal .modal-body').text("El campo de contraseña no puede estar vacío.");
+        $('#errorModal').modal('show');
+        return;
+    }
 
     const updatedData = {
-        id: usuario.id,  // Asegúrate de enviar la id
+        id: usuario.id,
         nombre: document.getElementById('nombre').value,
         correo: document.getElementById('correo').value,
         telefono: document.getElementById('telefono').value,
@@ -42,49 +68,37 @@ document.getElementById('editForm').addEventListener('submit', function(event) {
         curp: document.getElementById('curp').value,
         pais: document.getElementById('pais').value,
         estado: document.getElementById('estado').value,
-        fechaRegistro: usuario.fechaRegistro,  // No se modifica
-        username: usuario.username,  // No se modifica
+        fechaRegistro: usuario.fechaRegistro,
+        username: usuario.username,
+        password: password,
         rol: { id: parseInt(document.getElementById('rolNombre').value) }
     };
 
-    console.log("Datos enviados al backend:", updatedData);  // Debug para verificar datos enviados
-
-    // Enviar la actualización al backend
+    // Enviar datos al backend
     fetch(`http://localhost:8081/registros/${usuario.id}`, {
         method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData)
     })
     .then(response => response.json().then(data => ({ status: response.status, body: data })))
     .then(({ status, body }) => {
-        console.log("Código de respuesta:", status);
-        console.log("Respuesta del servidor:", body);
-
         if (status >= 400) {
             throw new Error(body.error || 'Error al actualizar el registro.');
         }
 
-        // Si la actualización fue exitosa, muestra el mensaje en el modal de éxito
-        document.querySelector('#successModal .modal-body').textContent = body.mensaje || 'Registro actualizado correctamente.';
+        $('#successModal .modal-body').text(body.mensaje || 'Registro actualizado correctamente.');
         $('#successModal').modal('show');
 
-        // Redirige cuando el modal se cierra
         $('#successModal').on('hidden.bs.modal', function () {
             window.location.href = '/Registro/buscarRegistro.html';
         });
 
-        // Cierra el modal automáticamente después de 2 segundos
         setTimeout(() => {
             $('#successModal').modal('hide');
         }, 2000);
     })
     .catch(error => {
-        console.error("Error durante la actualización:", error);
-
-        // Muestra el mensaje de error en el modal
-        document.querySelector('#errorModal .modal-body').textContent = error.message || 'Ocurrió un error al actualizar.';
+        $('#errorModal .modal-body').text(error.message || 'Ocurrió un error al actualizar.');
         $('#errorModal').modal('show');
     });
 });
