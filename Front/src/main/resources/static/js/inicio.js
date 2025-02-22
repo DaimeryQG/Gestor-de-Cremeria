@@ -1,14 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     /* Manejo del menú desplegable */
-    const menuButton = document.getElementById("menuButton");
+    const menuLabel = document.getElementById("menuLabel");
     const closeSidebar = document.getElementById("closeSidebar");
     const sidebar = document.getElementById("sidebar");
-    const menuIcon = document.getElementById("menuIcon");
+    const dynamicDiv = document.getElementById("DivDinamico");
     const overlay = createOverlay();
 
-    // Función para crear un fondo oscuro al abrir el menú
+    // Crear fondo oscuro al abrir el menú
     function createOverlay() {
+        let existingOverlay = document.getElementById("overlay");
+        if (existingOverlay) return existingOverlay; // Evitar duplicados
+
         const overlay = document.createElement("div");
         overlay.id = "overlay";
         overlay.style.position = "fixed";
@@ -23,35 +26,37 @@ document.addEventListener("DOMContentLoaded", () => {
         return overlay;
     }
 
-    if (menuButton && closeSidebar && sidebar) {
+    if (menuLabel && closeSidebar && sidebar) {
 
         // Abrir menú
-        menuButton.addEventListener("click", () => {
-            sidebar.style.transform = "translateX(0)";
+        menuLabel.addEventListener("click", () => {
+            sidebar.classList.add("show");
             overlay.style.display = "block";
-            menuIcon.style.display = "none";
         });
 
         // Cerrar menú
         closeSidebar.addEventListener("click", closeMenu);
-
-        // Cerrar menú si se hace clic fuera del menú
-        overlay.addEventListener("click", closeMenu);
+        overlay.addEventListener("click", closeMenu); // Cerrar menú al hacer clic fuera
 
         function closeMenu() {
-            sidebar.style.transform = "translateX(100%)";
+            sidebar.classList.remove("show");
             overlay.style.display = "none";
-            menuIcon.style.display = "block";
         }
     }
 
     /* Carga dinámica del contenido */
     const menuLinks = document.querySelectorAll(".menu-link");
-    const dynamicDiv = document.getElementById("DivDinamico");
 
     // Función para cargar contenido dinámico
     function loadContent(url) {
         if (!dynamicDiv) return;
+
+        dynamicDiv.innerHTML = `
+            <div class="text-center mt-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+            </div>`;
 
         fetch(url)
             .then(response => {
@@ -77,10 +82,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (menuLinks.length > 0) {
         menuLinks.forEach(link => {
             link.addEventListener("click", event => {
-                event.preventDefault(); // Evitar la navegación por defecto
+                event.preventDefault();
                 const target = link.getAttribute("data-target");
                 if (target) {
-                    loadContent(target); // Cargar el contenido correspondiente
+                    loadContent(target);
                 }
             });
         });
@@ -88,6 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Cargar contenido inicial por defecto si el div está vacío
     if (dynamicDiv && dynamicDiv.innerHTML.trim() === "") {
-        loadContent("/Usuario/usuario_detalle.html");
+        loadContent("/view/bienvenido/Bienvenido.html");
     }
 });

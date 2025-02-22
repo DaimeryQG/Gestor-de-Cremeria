@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página Inicial</title>
+    <title>Sistema de Control de Inventario</title>
 
     <!-- Enlace a Bootstrap CSS -->
     <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -20,6 +20,7 @@
             transform: translateX(100%);
             transition: transform 0.3s ease-in-out;
             z-index: 1050;
+            border-left: 2px solid #007bff;
         }
 
         #sidebar.show {
@@ -42,20 +43,88 @@
             display: block;
         }
 
-        /* Ajustes de la cabecera */
+        /* Cabecera */
+        header {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
         header h1 {
             margin: 0;
             text-align: center;
+            font-size: 1.8rem;
+            flex-grow: 1;
         }
 
-        /* Mejorar la apariencia del botón del menú */
-        #menuButton {
-            border: none;
+        /* Botón de menú */
+        #menuLabel {
+            background-color: #ffffff;
+            color: #007bff;
+            border-radius: 5px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: bold;
+            border: 1px solid #007bff;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        #menuLabel:hover {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+
+        /* Sidebar contenido */
+        #sidebar h5 {
+            font-weight: bold;
+        }
+
+        #sidebar ul li a {
+            display: block;
+            padding: 8px 12px;
+            border-radius: 5px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        #sidebar ul li a:hover {
+            background-color: #007bff;
+            color: #fff;
         }
 
         /* Mejora para el contenido dinámico */
         #DivDinamico {
-            min-height: 500px;
+            min-height: calc(100vh - 160px); /* Ajuste para footer */
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Spinner de carga */
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.4rem;
+            }
+
+            #sidebar {
+                width: 200px;
+            }
         }
     </style>
 </head>
@@ -66,15 +135,10 @@
     <div id="overlay"></div>
 
     <!-- Header -->
-    <header class="bg-primary text-white py-2">
-        <div class="container d-flex align-items-center">
-            <h1 class="mb-0 flex-grow-1 text-center display-6 fw-bold">
-                Sistema de Control de Inventario
-            </h1>
-            <button class="btn btn-light d-flex align-items-center justify-content-center" id="menuButton"
-                aria-label="Abrir menú">
-                <i class="bi bi-three-dots-vertical fs-4" id="menuIcon"></i>
-            </button>
+    <header class="bg-primary text-white py-3">
+        <div class="container d-flex align-items-center justify-content-between">
+            <h1 class="mb-0 fw-bold text-center flex-grow-1">Sistema de Control de Inventario</h1>
+            <div id="menuLabel" role="button" aria-label="Abrir menú" class="ms-3">Menú</div>
         </div>
     </header>
 
@@ -89,27 +153,33 @@
                 <i class="bi bi-person-circle fs-2"></i><br>
                 <span id="nombreUsuario">Nombre de Usuario</span>
             </li>
-            <li><a href="#" class="menu-link" data-target="/view/bienvenido/Bienvenido.html">Inicio</a></li>
-            <li><a href="#" class="menu-link" data-target="/view/ventas/ventas.html">Ventas</a></li>
-            <li><a href="#" class="menu-link" data-target="/view/precios/precios.html">Precios</a></li>
-            <li><a href="#" class="menu-link" data-target="/view/productos/productos.html">Productos</a></li>
-            <li><a href="#" class="menu-link" data-target="/view/proveedores/proveedores.html">Proveedores</a></li>
-            <li><a href="#" class="menu-link" data-target="/view/mapa/mapa.html">Mapa</a></li>
-            <li><a href="#" class="menu-link" data-target="/view/estadisticas/estadisticas.html">Estadísticas</a></li>
-            <li><a href="/Registro/buscarRegistro.html">Usuarios</a></li>
+            <li><a href="#" class="menu-link" data-target="/view/bienvenido/Bienvenido.html"><i class="bi bi-house"></i> Inicio</a></li>
+            <li><a href="#" class="menu-link" data-target="/view/ventas/ventas.html"><i class="bi bi-cart"></i> Ventas</a></li>
+            <li><a href="#" class="menu-link" data-target="/view/precios/precios.html"><i class="bi bi-currency-dollar"></i> Precios</a></li>
+            <li><a href="#" class="menu-link" data-target="/view/productos/productos.html"><i class="bi bi-box"></i> Productos</a></li>
+            <li><a href="#" class="menu-link" data-target="/view/proveedores/proveedores.html"><i class="bi bi-truck"></i> Proveedores</a></li>
+            <li><a href="#" class="menu-link" data-target="/view/mapa/mapa.html"><i class="bi bi-geo-alt"></i> Mapa</a></li>
+            <li><a href="#" class="menu-link" data-target="/view/estadisticas/estadisticas.html"><i class="bi bi-bar-chart"></i> Estadísticas</a></li>
+            <li><a href="/Registro/buscarRegistro.html"><i class="bi bi-people"></i> Usuarios</a></li>
         </ul>
     </div>
 
     <!-- Div donde se carga el contenido dinámico -->
     <div id="DivDinamico" class="container mt-4">
-        <!-- Aquí se cargará el contenido dinámicamente -->
         <h2 class="text-center">Bienvenido al Sistema de Control de Inventario</h2>
+        <p class="text-center">Seleccione una opción del menú para comenzar.</p>
     </div>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2024 Sistema de Control de Inventario - Todos los derechos reservados
+    </footer>
 
     <!-- Bootstrap JS -->
     <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/inicio.js"></script>
+    <!-- Script personalizado -->
     <script src="/js/menu.js"></script>
+    <script src="/js/inicio.js"></script>
 </body>
 
 </html>

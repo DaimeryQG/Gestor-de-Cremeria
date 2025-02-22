@@ -16,9 +16,10 @@ public class RegistroDTO {
     private Date fechaRegistro;
     private String username;
     private String rolNombre;  // Solo nombre del rol, no el objeto completo
+    private Boolean activo;
 
     // Constructor
-    public RegistroDTO(Long id,String nombre, String correo, String telefono, String direccion, String rfc, String curp, String pais, String estado, Date fechaRegistro, String username, String rolNombre) {
+    public RegistroDTO(Long id,String nombre, String correo, String telefono, String direccion, String rfc, String curp, String pais, String estado, Date fechaRegistro, String username, String rolNombre, boolean activo) {
         this.id = id;
         this.nombre = nombre;
         this.correo = correo;
@@ -31,6 +32,7 @@ public class RegistroDTO {
         this.fechaRegistro = fechaRegistro;
         this.username = username;
         this.rolNombre = rolNombre;
+        this.activo = activo;
     }
 
     // Getters y Setters
@@ -129,5 +131,13 @@ public class RegistroDTO {
 
     public void setRolNombre(String rolNombre) {
         this.rolNombre = rolNombre;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
     }
 }

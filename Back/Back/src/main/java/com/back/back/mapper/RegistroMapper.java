@@ -18,7 +18,8 @@ public class RegistroMapper {
                 registro.getEstado(),
                 registro.getFechaRegistro(),
                 registro.getUsername(),
-                registro.getRol().getNombre() // Solo el nombre del rol
+                registro.getRol().getNombre(), // Solo el nombre del rol
+                registro.isActivo()
         );
     }
 }
