@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,39 +14,46 @@
     <!-- CSS personalizado -->
     <link rel="stylesheet" href="/css/styles.css">
 </head>
+
 <body>
 
     <div class="container mt-5">
         <!-- Formulario de Búsqueda -->
-<div class="form-container p-4 border rounded shadow-sm">
-    <h2 class="text-center mb-4 title">Buscar Registro</h2>
-    <form id="searchForm" class="d-flex flex-wrap justify-content-between">
-        <div class="form-group flex-grow-1 mr-2">
-            <label for="searchOption">Buscar por:</label>
-            <select id="searchOption" class="form-control" required>
-                <option value="nombre">Nombre</option>
-                <option value="rfc">RFC</option>
-                <option value="curp">CURP</option>
-                <option value="correo">Correo</option>
-                <option value="telefono">Teléfono</option>
-                <option value="pais">País</option>
-                <option value="estado">Estado</option>
-                <option value="username">Username</option>
-                <option value="activo">Activo</option> <!-- ✅ Opción añadida -->
-            </select>
-        </div>
+        <div class="form-container p-4 border rounded shadow-sm">
+            <h2 class="text-center mb-4 title">Buscar Registro</h2>
+            <form id="searchForm" class="d-flex flex-wrap justify-content-between">
+                <div class="form-group flex-grow-1 mr-2">
+                    <label for="searchOption">Buscar por:</label>
+                    <select id="searchOption" class="form-control" required>
+                        <option value="nombre">Nombre</option>
+                        <option value="rfc">RFC</option>
+                        <option value="curp">CURP</option>
+                        <option value="correo">Correo</option>
+                        <option value="telefono">Teléfono</option>
+                        <option value="pais">País</option>
+                        <option value="estado">Estado</option>
+                        <option value="username">Username</option>
+                        <option value="activo">Activo</option> <!-- ✅ Opción añadida -->
+                    </select>
+                </div>
 
-        <div class="form-group flex-grow-2 mr-2" id="searchInputContainer">
-            <label for="searchInput">Término:</label>
-            <input type="text" id="searchInput" class="form-control" placeholder="Ingrese el valor" required>
-        </div>
+                <div class="form-group flex-grow-2 mr-2" id="searchInputContainer">
+                    <label for="searchInput">Término:</label>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Ingrese el valor" required>
 
-        <div class="form-group d-flex align-items-end">
-            <button type="submit" class="btn btn-primary mr-2"><i class="fas fa-search"></i> Buscar</button>
-            <button type="button" class="btn btn-success" id="createButton"><i class="fas fa-plus"></i> Crear</button>
+                    <select id="activoSelect" class="form-control" style="display: none;">
+                        <option value="true">Activo</option>
+                        <option value="false">Inactivo</option>
+                    </select>
+                </div>
+
+                <div class="form-group d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary mr-2"><i class="fas fa-search"></i> Buscar</button>
+                    <button type="button" class="btn btn-success" id="createButton"><i class="fas fa-plus"></i>
+                        Crear</button>
+                </div>
+            </form>
         </div>
-    </form>
-</div>
 
         <!-- Detalles del Usuario -->
         <div id="userDetails" class="details-container mt-4 p-4 border rounded shadow-sm" style="display: none;">
@@ -82,7 +90,8 @@
         </div>
 
         <!-- Modal de Error -->
-        <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -107,7 +116,8 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- Tu script personalizado -->
+
+    <!-- Script personalizado -->
     <script src="/js/Registros/buscarRegistro.js"></script>
 
 </body>
