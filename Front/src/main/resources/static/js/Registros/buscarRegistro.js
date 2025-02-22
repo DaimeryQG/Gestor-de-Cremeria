@@ -1,49 +1,44 @@
 document.getElementById('searchForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    const searchOption = document.getElementById('searchOption').value;  // Obtener el tipo de búsqueda seleccionado
-    const searchInput = document.getElementById('searchInput').value.trim();  // Obtener el valor de búsqueda
+    const searchOption = document.getElementById('searchOption').value; 
+    const searchInput = document.getElementById('searchInput').value.trim(); 
 
     if (!searchInput) {
         alert('Por favor, ingrese un término de búsqueda válido.');
         return;
     }
 
+    // Validación especial para el campo "activo"
+    if (searchOption === 'activo' && searchInput.toLowerCase() !== 'true' && searchInput.toLowerCase() !== 'false') {
+        alert('Por favor, ingrese "true" o "false" para el campo Activo.');
+        return;
+    }
+
     buscarRegistro(searchOption, searchInput);
 });
 
-// Crear
+// Crear nuevo registro
 document.getElementById('createButton').addEventListener('click', function() {
-    window.location.href = '/Registro/crearRegistro.html'; // Redirige a la página de registro
+    window.location.href = '/Registro/crearRegistro.html'; 
 });
 
 function buscarRegistro(searchOption, searchInput) {
-    let url = ''; 
-    let bodyData = {};
+    const url = 'http://localhost:8081/registros/buscar'; 
+    const bodyData = {};
+    bodyData[searchOption] = searchInput;
 
-    if (searchOption === 'nombre') {
-        url = 'http://localhost:8081/registros/buscarPorNombre';
-        bodyData = { nombre: searchInput };
-    } else if (searchOption === 'rfc') {
-        url = 'http://localhost:8081/registros/buscarPorRfc';
-        bodyData = { rfc: searchInput };
-    } else if (searchOption === 'curp') {
-        url = 'http://localhost:8081/registros/buscarPorCurp';
-        bodyData = { curp: searchInput };
-    }
-
-    // Limpiar resultados anteriores
     document.getElementById('registroList').innerHTML = '';
-    document.getElementById('userList').style.display = 'none'; // Ocultar la lista de usuarios
-    document.getElementById('userDetails').style.display = 'none'; // Ocultar detalles del usuario
-    
+    document.getElementById('userList').style.display = 'none';
+    document.getElementById('userDetails').style.display = 'none';
+
     realizarBusqueda(url, bodyData)
         .then(data => {
             if (!data || data.length === 0) {
-                throw new Error('No se encontró el registro.');
+                throw new Error('No se encontraron registros.');
             }
             mostrarListaUsuarios(data);
-            document.getElementById('searchInput').value = '';  // Limpiar el campo de búsqueda
+            document.getElementById('searchInput').value = ''; 
         })
         .catch(error => {
             mostrarModalError(error.message);
@@ -64,13 +59,11 @@ function realizarBusqueda(url, bodyData) {
 }
 
 function mostrarListaUsuarios(data) {
-    // Limpiar la lista previa si la hay
     const registroList = document.getElementById('registroList');
     registroList.innerHTML = '';
 
-    // Mostrar la sección de lista
     document.getElementById('userList').style.display = 'block';
-    document.getElementById('userDetails').style.display = 'none'; // Ocultar detalles previos si están abiertos
+    document.getElementById('userDetails').style.display = 'none';
 
     data.forEach(registro => {
         const listItem = document.createElement('li');
@@ -101,8 +94,17 @@ function mostrarDetallesUsuario(data) {
     document.getElementById('estado').textContent = data.estado || 'No disponible';
     document.getElementById('fechaRegistro').textContent = data.fechaRegistro || 'No disponible';
     document.getElementById('username').textContent = data.username || 'No disponible';
-    document.getElementById('rolNombre').textContent = data.rolNombre || 'No disponible';
+    document.getElementById('rolNombre').textContent = data.rol || 'No disponible';
 
+    // 🎨 Mostrar Estado Activo/Inactivo con Badge
+    const activoBadge = document.getElementById('activo');
+    if (data.activo) {
+        activoBadge.innerHTML = '<span class="badge badge-success">Activo ✔️</span>';
+    } else {
+        activoBadge.innerHTML = '<span class="badge badge-danger">Inactivo ❌</span>';
+    }
+
+    // Botones para editar/eliminar
     document.getElementById('updateButton').onclick = () => {
         sessionStorage.setItem('usuarioParaEditar', JSON.stringify(data));
         window.location.href = '/Registro/editarRegistro.html';

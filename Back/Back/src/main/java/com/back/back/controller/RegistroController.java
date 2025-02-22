@@ -184,4 +184,30 @@ public class RegistroController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
+    @PostMapping("/buscar")
+    public ResponseEntity<?> buscarPorUnCampo(@RequestBody Map<String, String> filtros) {
+        if (filtros.size() != 1) {
+            return ResponseEntity.badRequest().body("Debe proporcionar exactamente un campo para la búsqueda");
+        }
+
+        String campo = filtros.keySet().iterator().next();
+        String valor = filtros.get(campo);
+
+        if (!registroService.esCampoValido(campo)) {
+            return ResponseEntity.badRequest().body("Campo de búsqueda no soportado");
+        }
+
+        List<Registro> registros = registroService.buscarPorUnCampo(campo, valor);
+
+        if (registros.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<RegistroDTO> registrosDTO = registros.stream()
+                .map(RegistroMapper::toDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(registrosDTO);
+    }
 }

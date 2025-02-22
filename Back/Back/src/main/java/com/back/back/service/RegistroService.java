@@ -1,8 +1,10 @@
 package com.back.back.service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -116,6 +118,29 @@ public class RegistroService {
     
         registro.setActivo(true);  // Activamos el registro
         registroRepository.save(registro);
+    }
+
+    public List<Registro> buscarPorUnCampo(String campo, String valor) {
+        Specification<Registro> spec;
+
+        // Manejo especial para el campo booleano "activo"
+        if ("activo".equalsIgnoreCase(campo)) {
+            boolean valorBooleano = Boolean.parseBoolean(valor);
+            spec = (root, query, cb) -> cb.equal(root.get(campo), valorBooleano);
+        } else {
+            // Para otros campos realiza búsqueda con LIKE
+            spec = (root, query, cb) -> cb.like(cb.lower(root.get(campo)), "%" + valor.toLowerCase() + "%");
+        }
+
+        return registroRepository.findAll(spec);
+    }
+
+    public boolean esCampoValido(String campo) {
+        List<String> camposValidos = Arrays.asList(
+            "nombre", "correo", "telefono", "direccion", "rfc", "curp", "pais", 
+            "estado", "fechaRegistro", "username", "activo"
+        );
+        return camposValidos.contains(campo);
     }
 }
 
