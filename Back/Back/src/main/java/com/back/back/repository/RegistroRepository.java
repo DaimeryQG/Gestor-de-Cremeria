@@ -12,10 +12,6 @@ public interface RegistroRepository extends JpaRepository<Registro, Long>, JpaSp
     
     List<Registro> findByNombre(String nombre); // Buscar por nombre
 
-    Registro findByCurp(String curp); // Buscar por curp
-
-    Registro findByRfc(String rfc); // Buscar por rfc
-
     Optional<Registro> findById(Long id); // Buscar por id
 
     boolean existsByRfcOrCurp(String rfc, String curp);

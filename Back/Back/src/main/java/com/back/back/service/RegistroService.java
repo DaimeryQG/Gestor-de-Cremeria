@@ -12,7 +12,6 @@ import com.back.back.model.Registro;
 import com.back.back.model.Rol;
 import com.back.back.repository.RegistroRepository;
 import com.back.back.repository.RolRepository;
-import com.back.back.service.RegistroService.ResourceNotFoundException;
 
 @Service
 public class RegistroService {
@@ -92,15 +91,7 @@ public class RegistroService {
     public List<Registro> buscarPorNombre(String nombre) {
         return registroRepository.findByNombre(nombre);
     }
-
-    public Registro buscarPorCurp(String curp) {
-        return registroRepository.findByCurp(curp);
-    }
-
-    public Registro buscarPorRfc(String rfc) {
-        return registroRepository.findByRfc(rfc);
-    } 
-
+    
     public boolean existeRegistroPorRfcOCurp(String rfc, String curp) {
         return registroRepository.existsByRfcOrCurp(rfc, curp);
     }

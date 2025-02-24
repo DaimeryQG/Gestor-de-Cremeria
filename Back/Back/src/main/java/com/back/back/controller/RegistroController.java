@@ -44,44 +44,6 @@ public class RegistroController {
         return ResponseEntity.ok(registroDTO); // 200
     }
 
-    // Buscar registro por nombre
-    @PostMapping("/buscarPorNombre")
-    public ResponseEntity<List<RegistroDTO>> buscarPorNombre(@RequestBody Map<String, String> params) {
-        String nombre = params.get("nombre");
-        List<Registro> registro = registroService.buscarPorNombre(nombre);
-        if (registro == null || registro.isEmpty()) {
-            return ResponseEntity.notFound().build(); // Si no se encuentran registros, devuelve 404
-        }
-        List<RegistroDTO> registroDTO = registro.stream()
-                .map(RegistroMapper::toDTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(registroDTO); // 200 OK
-    }
-
-    // Buscar registro por CURP
-    @PostMapping("/buscarPorCurp")
-    public ResponseEntity<RegistroDTO> buscarPorCurp(@RequestBody Map<String, String> params) {
-        String curp = params.get("curp");
-        Registro registro = registroService.buscarPorCurp(curp);
-        if (registro == null) {
-            return ResponseEntity.notFound().build(); // 404
-        }
-        RegistroDTO registroDTO = RegistroMapper.toDTO(registro);
-        return ResponseEntity.ok(registroDTO); // 200 OK
-    }
-
-    // Buscar registro por RFC
-    @PostMapping("/buscarPorRfc")
-    public ResponseEntity<RegistroDTO> buscarPorRfc(@RequestBody Map<String, String> params) {
-        String rfc = params.get("rfc");
-        Registro registro = registroService.buscarPorRfc(rfc);
-        if (registro == null) {
-            return ResponseEntity.notFound().build(); // 404
-        }
-        RegistroDTO registroDTO = RegistroMapper.toDTO(registro);
-        return ResponseEntity.ok(registroDTO); // 200 OK
-    }
-
     // Registrar un nuevo usuario
     @PostMapping("/registrar")
     public ResponseEntity<Map<String, String>> registrar(@RequestBody Registro registro) {
@@ -185,6 +147,7 @@ public class RegistroController {
         }
     }
 
+    // Buscar un regitro por un campo en especifico
     @PostMapping("/buscar")
     public ResponseEntity<?> buscarPorUnCampo(@RequestBody Map<String, String> filtros) {
         if (filtros.size() != 1) {
