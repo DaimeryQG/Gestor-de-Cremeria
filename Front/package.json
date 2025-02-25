@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "cd src/main/resources/templates && live-server"
+    "start": "cd src/main/resources/static && live-server"
   },
   "keywords": [],
   "author": "",

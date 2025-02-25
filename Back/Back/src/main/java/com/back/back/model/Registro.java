@@ -31,6 +31,8 @@ public class Registro {
     @JoinColumn(name = "id_rol", nullable = false)
     private Rol rol;
 
+    private boolean activo = true;
+
     // Constructores
     public Registro() {}
 
@@ -151,4 +153,12 @@ public class Registro {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
 }

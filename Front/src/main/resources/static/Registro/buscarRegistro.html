@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Registro</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para íconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+
+    <div class="container mt-5">
+        <!-- Formulario de Búsqueda -->
+        <div class="form-container p-4 border rounded shadow-sm">
+            <h2 class="text-center mb-4 title">Buscar Registro</h2>
+            <form id="searchForm" class="d-flex flex-wrap justify-content-between">
+                <div class="form-group flex-grow-1 mr-2">
+                    <label for="searchOption">Buscar por:</label>
+                    <select id="searchOption" class="form-control" required>
+                        <option value="nombre">Nombre</option>
+                        <option value="rfc">RFC</option>
+                        <option value="curp">CURP</option>
+                        <option value="correo">Correo</option>
+                        <option value="telefono">Teléfono</option>
+                        <option value="pais">País</option>
+                        <option value="estado">Estado</option>
+                        <option value="username">Username</option>
+                        <option value="activo">Activo</option> <!-- ✅ Opción añadida -->
+                    </select>
+                </div>
+
+                <div class="form-group flex-grow-2 mr-2" id="searchInputContainer">
+                    <label for="searchInput">Término:</label>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Ingrese el valor" required>
+
+                    <select id="activoSelect" class="form-control" style="display: none;">
+                        <option value="true">Activo</option>
+                        <option value="false">Inactivo</option>
+                    </select>
+                </div>
+
+                <div class="form-group d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary mr-2"><i class="fas fa-search"></i> Buscar</button>
+                    <button type="button" class="btn btn-success" id="createButton"><i class="fas fa-plus"></i>
+                        Crear</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Detalles del Usuario -->
+        <div id="userDetails" class="details-container mt-4 p-4 border rounded shadow-sm" style="display: none;">
+            <h3 class="mb-3 title">Detalles del Registro</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Nombre:</strong> <span id="nombre"></span></p>
+                    <p><strong>Correo:</strong> <span id="correo"></span></p>
+                    <p><strong>Teléfono:</strong> <span id="telefono"></span></p>
+                    <p><strong>Dirección:</strong> <span id="direccion"></span></p>
+                    <p><strong>RFC:</strong> <span id="rfc"></span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>CURP:</strong> <span id="curp"></span></p>
+                    <p><strong>País:</strong> <span id="pais"></span></p>
+                    <p><strong>Estado:</strong> <span id="estado"></span></p>
+                    <p><strong>Fecha de Registro:</strong> <span id="fechaRegistro"></span></p>
+                    <p><strong>Username:</strong> <span id="username"></span></p>
+                    <p><strong>Rol:</strong> <span id="rolNombre"></span></p>
+                    <!-- ✅ Estado Activo/Inactivo -->
+                    <p><strong>Estado:</strong> <span id="activo"></span></p>
+                </div>
+            </div>
+            <div class="button-group mt-3">
+                <button id="updateButton" class="btn btn-primary"><i class="fas fa-edit"></i> Actualizar</button>
+                <button id="deleteButton" class="btn btn-danger"><i class="fas fa-trash"></i> Eliminar</button>
+            </div>
+        </div>
+
+        <!-- Lista de Registros -->
+        <div id="userList" class="list-container mt-4 p-4 border rounded shadow-sm" style="display: none;">
+            <h3 class="title">Registros encontrados</h3>
+            <ul id="registroList" class="list-group"></ul>
+        </div>
+
+        <!-- Modal de Error -->
+        <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="errorModalLabel">Error de Búsqueda</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Por favor, ingrese un término de búsqueda válido.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS y dependencias -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Script personalizado -->
+    <script src="/js/Registros/buscarRegistro.js"></script>
+
+</body>
+</html>
