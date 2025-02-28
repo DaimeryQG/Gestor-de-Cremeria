@@ -28,7 +28,6 @@ public class Producto {
 
     private int stock;
 
-    /*
     @ManyToOne
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
@@ -36,7 +35,6 @@ public class Producto {
     @ManyToOne
     @JoinColumn(name = "proveedor_id", nullable = false)
     private Proveedor proveedor;
-    */
 
     @Column(name = "fecha_registro", nullable = false, updatable = false)
     private LocalDateTime fechaRegistro;
@@ -93,7 +91,6 @@ public class Producto {
         this.stock = stock;
     }
 
-    /*
     public Categoria getCategoria() {
         return categoria;
     }
@@ -109,7 +106,6 @@ public class Producto {
     public void setProveedor(Proveedor proveedor) {
         this.proveedor = proveedor;
     }
-    */
 
     public LocalDateTime getFechaRegistro() {
         return fechaRegistro;

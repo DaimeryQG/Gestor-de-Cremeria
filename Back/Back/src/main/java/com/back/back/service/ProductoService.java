@@ -2,49 +2,60 @@ package com.back.back.service;
 
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.back.back.model.Producto;
 import com.back.back.repository.ProductoRepository;
+import com.back.back.utils.CSVHelper;
 
 @Service
 public class ProductoService {
 
-    @Autowired
-    private ProductoRepository productoRepository;
+    private final ProductoRepository productoRepository;
 
-    // Obtener todos los productos
-    public List<Producto> obtenerTodosLosProductos() {
+    public ProductoService(ProductoRepository productoRepository) {
+        this.productoRepository = productoRepository;
+    }
+
+    public List<Producto> getAllProductos() {
         return productoRepository.findAll();
     }
 
-    // Obtener un producto por ID
-    public Optional<Producto> obtenerProductoPorId(Long productoId) {
-        return productoRepository.findById(productoId);
+    public Optional<Producto> getProductoById(Long id) {
+        return productoRepository.findById(id);
     }
 
-    // Crear un nuevo producto
-    public Producto crearProducto(Producto producto) {
+    public Producto saveProducto(Producto producto) {
         return productoRepository.save(producto);
     }
 
-    // Actualizar un producto existente
-    public Producto actualizarProducto(Long productoId, Producto producto) {
-        if (productoRepository.existsById(productoId)) {
-            producto.setProductoId(productoId);
-            return productoRepository.save(producto);
-        }
-        return null; // Si el producto no existe, devolver null (o lanzar una excepción)
+    public Producto updateProducto(Long id, Producto producto) {
+        return productoRepository.findById(id)
+                .map(existingProducto -> {
+                    existingProducto.setNombre(producto.getNombre());
+                    existingProducto.setDescripcion(producto.getDescripcion());
+                    existingProducto.setPrecio(producto.getPrecio());
+                    existingProducto.setStock(producto.getStock());
+                    existingProducto.setFechaCaducidad(producto.getFechaCaducidad());
+                    existingProducto.setActivo(producto.isActivo());
+                    return productoRepository.save(existingProducto);
+                }).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
     }
 
-    // Eliminar un producto
-    public boolean eliminarProducto(Long productoId) {
-        if (productoRepository.existsById(productoId)) {
-            productoRepository.deleteById(productoId);
-            return true;
+    public void deleteProducto(Long id) {
+        productoRepository.deleteById(id);
+    }
+
+    public void saveProductosFromCSV(MultipartFile file) {
+        if (!CSVHelper.hasCSVFormat(file)) {
+            throw new RuntimeException("Formato de archivo no compatible, debe ser un CSV");
         }
-        return false; // Si el producto no existe, devolver false
+        try {
+            List<Producto> productos = CSVHelper.csvToProductos(file.getInputStream());
+            productoRepository.saveAll(productos);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al guardar productos desde CSV: " + e.getMessage());
+        }
     }
 }

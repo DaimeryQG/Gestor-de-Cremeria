@@ -14,17 +14,17 @@ public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "categoria_id")
-    private Long categoriaId;
+    private int categoriaId;
 
     private String nombre;
     private String descripcion;
 
     // Getters and setters
-    public Long getCategoriaId() {
+    public int getCategoriaId() {
         return categoriaId;
     }
 
-    public void setCategoriaId(Long categoriaId) {
+    public void setCategoriaId(int categoriaId) {
         this.categoriaId = categoriaId;
     }
 

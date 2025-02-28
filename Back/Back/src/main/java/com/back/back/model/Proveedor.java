@@ -14,7 +14,7 @@ public class Proveedor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "proveedor_id")
-    private Long proveedorId;
+    private int proveedorId;
 
     private String nombre;
     private String telefono;
@@ -24,11 +24,11 @@ public class Proveedor {
     private int estado;  // 1 = Activo, 0 = Inactivo
 
     // Getters and setters
-    public Long getProveedorId() {
+    public int getProveedorId() {
         return proveedorId;
     }
 
-    public void setProveedorId(Long proveedorId) {
+    public void setProveedorId(int proveedorId) {
         this.proveedorId = proveedorId;
     }
 
