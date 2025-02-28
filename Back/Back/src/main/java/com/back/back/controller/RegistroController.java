@@ -61,7 +61,7 @@ public class RegistroController {
         return ResponseEntity.ok(response);
     }
 
-    // ✅ Actualizar registro con estructura uniforme
+    // Actualizar registro con estructura uniforme
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, String>> actualizar(@PathVariable Long id, @RequestBody Registro registro) {
         Map<String, String> response = new HashMap<>();

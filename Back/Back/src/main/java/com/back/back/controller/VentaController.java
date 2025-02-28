@@ -19,6 +19,7 @@ public class VentaController {
         this.ventaService = ventaService;
     }
 
+    // Hacer una venta
     @PostMapping
     public ResponseEntity<Venta> registrarVenta(@RequestBody List<DetalleVenta> detalles) {
         try {
@@ -29,6 +30,7 @@ public class VentaController {
         }
     }
 
+    // Obtener todas las ventas
     @GetMapping
     public List<Venta> obtenerVentas() {
         return ventaService.obtenerVentas();

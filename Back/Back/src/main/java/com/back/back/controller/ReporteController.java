@@ -18,6 +18,7 @@ public class ReporteController {
         this.reporteService = reporteService;
     }
 
+    // Obtener reporte de las ventas
     @GetMapping("/ventas")
     public ResponseEntity<BigDecimal> obtenerTotalVentas(
             @RequestParam("inicio") String inicio,

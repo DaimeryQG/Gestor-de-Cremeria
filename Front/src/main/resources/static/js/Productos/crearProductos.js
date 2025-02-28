@@ -9,14 +9,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const uploadCsvButton = document.getElementById("uploadCsvButton");
     const csvFileInput = document.getElementById("csvFile");
 
-    // 🔹 Agregar una fila al principio de la tabla de productos
+    // 🔹 Agregar una fila a la tabla de productos
     function agregarFilaProducto(producto) {
         if (!producto || !producto.nombre) {
-            console.error("⚠️ Error: Producto inválido recibido del backend.", producto);
+            console.error("⚠️ Producto inválido recibido del backend.", producto);
             return;
         }
 
+        console.log("🧐 Agregando producto a la tabla:", producto);
+
         const fila = document.createElement("tr");
+        fila.setAttribute("id", `producto-${producto.productoId}`);
         fila.innerHTML = `
             <td>${producto.nombre}</td>
             <td>${producto.descripcion || "N/A"}</td>
@@ -25,60 +28,91 @@ document.addEventListener("DOMContentLoaded", function () {
             <td>${producto.categoria?.nombre || "Sin Categoría"}</td>
             <td>${producto.proveedor?.nombre || "Sin Proveedor"}</td>
             <td>${producto.fechaCaducidad || "N/A"}</td>
-            <td>${producto.activo ? "Sí" : "No"}</td>
-            <td>
-                <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${producto.productoId})">Eliminar</button>
+            <td class="text-center">
+                <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${producto.productoId})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+            <td class="text-center">
+                <button class="btn btn-warning btn-sm" onclick="editarProducto(${producto.productoId})">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </td>
+            <td class="text-center">
+                <button class="btn btn-${producto.activo ? "secondary" : "success"} btn-sm" 
+                        onclick="toggleEstadoProducto(${producto.productoId}, ${producto.activo})">
+                    <i class="fas fa-${producto.activo ? "ban" : "check"}"></i> 
+                    ${producto.activo ? "Desactivar" : "Activar"}
+                </button>
             </td>
         `;
-
-        // Insertar el nuevo producto al principio de la tabla
-        productosTableBody.prepend(fila);
+        productosTableBody.appendChild(fila);
     }
 
-    // 🔹 Enviar formulario para guardar producto
+    window.toggleEstadoProducto = function (id, estadoActual) {
+        fetch(`${API_URL}/productos/${id}/toggle`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ activo: !estadoActual })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(`🔄 Estado cambiado a ${data.activo ? "Activo" : "Inactivo"}:`, data);
+            actualizarFilaProducto(data);
+        })
+        .catch(error => console.error("❌ Error al cambiar estado:", error));
+    };
+
+    // 🔹 Cargar datos del producto en el formulario para editar
+    window.editarProducto = function (id) {
+        fetch(`${API_URL}/productos/${id}`)
+            .then(response => response.json())
+            .then(producto => {
+                console.log("✏️ Cargando producto para edición:", producto);
+
+                document.getElementById("nombre").value = producto.nombre;
+                document.getElementById("descripcion").value = producto.descripcion;
+                document.getElementById("precio").value = producto.precio;
+                document.getElementById("stock").value = producto.stock;
+                document.getElementById("fecha_caducidad").value = producto.fechaCaducidad;
+                document.getElementById("categoria").value = producto.categoria ? producto.categoria.categoriaId : "";
+                document.getElementById("proveedor").value = producto.proveedor ? producto.proveedor.proveedorId : "";
+                document.getElementById("activo").checked = producto.activo;
+
+                // Guardar el ID del producto en un atributo para saber si es edición
+                productoForm.setAttribute("data-producto-id", id);
+            })
+            .catch(error => console.error("❌ Error al cargar producto:", error));
+    };
+
+    // 🔹 Guardar o actualizar un producto
     productoForm.addEventListener("submit", function (event) {
         event.preventDefault();
-
-        const nombre = document.getElementById("nombre").value.trim();
-        if (nombre.length < 3) {
-            alert("⚠️ El nombre del producto debe tener al menos 3 caracteres.");
-            return;
-        }
-
-        const fechaCaducidad = document.getElementById("fecha_caducidad").value;
-        if (!fechaCaducidad) {
-            alert("⚠️ Debes ingresar una fecha de caducidad.");
-            return;
-        }
 
         const formData = new FormData(productoForm);
         const producto = Object.fromEntries(formData.entries());
 
         producto.activo = document.getElementById("activo").checked;
-        producto.categoria = { categoriaId: parseInt(producto.categoria) };
-        producto.proveedor = { proveedorId: parseInt(producto.proveedor) };
-        producto.fechaCaducidad = fechaCaducidad;  
+        producto.categoria = producto.categoria ? { categoriaId: Number(producto.categoria) } : null;
+        producto.proveedor = producto.proveedor ? { proveedorId: Number(producto.proveedor) } : null;
+        producto.fechaCaducidad = document.getElementById("fecha_caducidad").value;
 
-        console.log("📤 Enviando JSON:", JSON.stringify(producto));
+        const productoId = productoForm.getAttribute("data-producto-id");
 
-        fetch(`${API_URL}/productos`, {
-            method: "POST",
+        const method = productoId ? "PUT" : "POST";
+        const url = productoId ? `${API_URL}/productos/${productoId}` : `${API_URL}/productos`;
+
+        fetch(url, {
+            method,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(producto),
         })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => { throw new Error(text); });
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            console.log("✅ Producto guardado correctamente:", data);
-            agregarFilaProducto(data);
+            console.log(`✅ Producto ${productoId ? "actualizado" : "creado"}:`, data);
+            productoId ? actualizarFilaProducto(data) : agregarFilaProducto(data);
             productoForm.reset();
-
-            // Mostrar el modal de éxito
-            $("#successModal").modal("show");
+            productoForm.removeAttribute("data-producto-id");
         })
         .catch(error => {
             console.error("❌ Error al guardar producto:", error);
@@ -86,15 +120,85 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    // 🔹 Actualizar la fila de la tabla después de editar
+    function actualizarFilaProducto(producto) {
+        const fila = document.getElementById(`producto-${producto.productoId}`);
+        if (!fila) return;
+
+        fila.innerHTML = `
+            <td>${producto.nombre}</td>
+            <td>${producto.descripcion || "N/A"}</td>
+            <td>${producto.precio || 0}</td>
+            <td>${producto.stock || 0}</td>
+            <td>${producto.categoria?.nombre || "Sin Categoría"}</td>
+            <td>${producto.proveedor?.nombre || "Sin Proveedor"}</td>
+            <td>${producto.fechaCaducidad || "N/A"}</td>
+            <td class="text-center">
+                <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${producto.productoId})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+            <td class="text-center">
+                <button class="btn btn-warning btn-sm" onclick="editarProducto(${producto.productoId})">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </td>
+            <td class="text-center">
+                <button class="btn btn-${producto.activo ? "secondary" : "success"} btn-sm" 
+                        onclick="toggleEstadoProducto(${producto.productoId}, ${producto.activo})">
+                    <i class="fas fa-${producto.activo ? "ban" : "check"}"></i> 
+                    ${producto.activo ? "Desactivar" : "Activar"}
+                </button>
+            </td>
+        `;
+    }
+
     // 🔹 Eliminar producto
     window.eliminarProducto = function (id) {
         fetch(`${API_URL}/productos/${id}`, { method: "DELETE" })
             .then(() => {
                 alert("🗑️ Producto eliminado.");
-                location.reload();
+                document.getElementById(`producto-${id}`).remove();
             })
             .catch(error => console.error("❌ Error al eliminar producto:", error));
     };
+
+    // 🔹 Cargar productos al inicio
+    function cargarProductos() {
+        fetch(`${API_URL}/productos`)
+            .then(response => response.json())
+            .then(productos => {
+                productosTableBody.innerHTML = "";
+                productos.forEach(producto => agregarFilaProducto(producto));
+            })
+            .catch(error => console.error("❌ Error al cargar productos:", error));
+    }
+
+    // 🔹 Cargar categorías
+    function cargarCategorias() {
+        fetch(`${API_URL}/categorias`)
+            .then(response => response.json())
+            .then(categorias => {
+                categoriaSelect.innerHTML = '<option value="">Sin Categoría</option>';
+                categorias.forEach(categoria => {
+                    categoriaSelect.innerHTML += `<option value="${categoria.categoriaId}">${categoria.nombre}</option>`;
+                });
+            })
+            .catch(error => console.error("❌ Error al cargar categorías:", error));
+    }
+
+    // 🔹 Cargar proveedores
+    function cargarProveedores() {
+        fetch(`${API_URL}/proveedores`)
+            .then(response => response.json())
+            .then(proveedores => {
+                proveedorSelect.innerHTML = '<option value="">Sin Proveedor</option>';
+                proveedores.forEach(proveedor => {
+                    proveedorSelect.innerHTML += `<option value="${proveedor.proveedorId}">${proveedor.nombre}</option>`;
+                });
+            })
+            .catch(error => console.error("❌ Error al cargar proveedores:", error));
+    }
 
     // 🔹 Subir CSV
     uploadCsvButton.addEventListener("click", function () {
@@ -120,47 +224,6 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(error => console.error("❌ Error al subir archivo CSV:", error));
     });
-
-    // 🔹 Cargar datos al inicio
-    function cargarCategorias() {
-        fetch(`${API_URL}/categorias`)
-            .then(response => response.json())
-            .then(categorias => {
-                categoriaSelect.innerHTML = "";
-                categorias.forEach(categoria => {
-                    const option = document.createElement("option");
-                    option.value = categoria.categoriaId;
-                    option.textContent = categoria.nombre;
-                    categoriaSelect.appendChild(option);
-                });
-            })
-            .catch(error => console.error("❌ Error al cargar categorías:", error));
-    }
-
-    function cargarProveedores() {
-        fetch(`${API_URL}/proveedores`)
-            .then(response => response.json())
-            .then(proveedores => {
-                proveedorSelect.innerHTML = "";
-                proveedores.forEach(proveedor => {
-                    const option = document.createElement("option");
-                    option.value = proveedor.proveedorId;
-                    option.textContent = proveedor.nombre;
-                    proveedorSelect.appendChild(option);
-                });
-            })
-            .catch(error => console.error("❌ Error al cargar proveedores:", error));
-    }
-
-    function cargarProductos() {
-        fetch(`${API_URL}/productos`)
-            .then(response => response.json())
-            .then(productos => {
-                productosTableBody.innerHTML = "";
-                productos.forEach(producto => agregarFilaProducto(producto));
-            })
-            .catch(error => console.error("❌ Error al cargar productos:", error));
-    }
 
     cargarCategorias();
     cargarProveedores();

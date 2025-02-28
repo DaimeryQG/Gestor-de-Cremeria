@@ -18,20 +18,25 @@ public class ProductoService {
         this.productoRepository = productoRepository;
     }
 
-    public List<Producto> getAllProductos() {
-        return productoRepository.findAll();
+    // Obtener todos los productos con categoría y proveedor completos
+    public List<Producto> getAllProductosWithRelations() {
+        return productoRepository.findAllWithRelations();
     }
 
-    public Optional<Producto> getProductoById(Long id) {
-        return productoRepository.findById(id);
+    // ✅ Agregar este método para obtener un producto por ID con sus relaciones completas
+    public Optional<Producto> getProductoByIdWithRelations(Long id) {
+        return productoRepository.findByIdWithRelations(id);
     }
 
+    // Guardar un producto y devolverlo con categoría y proveedor completos
     public Producto saveProducto(Producto producto) {
-        return productoRepository.save(producto);
+        Producto nuevoProducto = productoRepository.save(producto);
+        return productoRepository.findByIdWithRelations(nuevoProducto.getProductoId()).orElse(nuevoProducto);
     }
 
+    // Actualizar un producto manteniendo su categoría y proveedor
     public Producto updateProducto(Long id, Producto producto) {
-        return productoRepository.findById(id)
+        return productoRepository.findByIdWithRelations(id)
                 .map(existingProducto -> {
                     existingProducto.setNombre(producto.getNombre());
                     existingProducto.setDescripcion(producto.getDescripcion());
@@ -39,6 +44,15 @@ public class ProductoService {
                     existingProducto.setStock(producto.getStock());
                     existingProducto.setFechaCaducidad(producto.getFechaCaducidad());
                     existingProducto.setActivo(producto.isActivo());
+
+                    // Asegurar que la categoría y el proveedor no se pierdan
+                    if (producto.getCategoria() != null) {
+                        existingProducto.setCategoria(producto.getCategoria());
+                    }
+                    if (producto.getProveedor() != null) {
+                        existingProducto.setProveedor(producto.getProveedor());
+                    }
+
                     return productoRepository.save(existingProducto);
                 }).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
     }

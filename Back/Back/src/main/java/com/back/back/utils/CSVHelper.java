@@ -34,7 +34,7 @@ public class CSVHelper {
                 producto.setDescripcion(csvRecord.get("descripcion"));
                 producto.setPrecio(new BigDecimal(csvRecord.get("precio")));
                 producto.setStock(Integer.parseInt(csvRecord.get("stock")));
-                producto.setFechaCaducidad(LocalDate.parse(csvRecord.get("fecha_caducidad")));
+                producto.setFechaCaducidad(LocalDate.parse(csvRecord.get("fechaCaducidad")));
                 producto.setActivo(Boolean.parseBoolean(csvRecord.get("activo")));
                 
                 // Fecha de registro se asigna automáticamente
