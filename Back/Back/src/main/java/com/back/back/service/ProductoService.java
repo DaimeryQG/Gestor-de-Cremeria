@@ -13,9 +13,11 @@ import com.back.back.utils.CSVHelper;
 public class ProductoService {
 
     private final ProductoRepository productoRepository;
+    private final CSVHelper csvHelper;
 
-    public ProductoService(ProductoRepository productoRepository) {
+    public ProductoService(ProductoRepository productoRepository, CSVHelper csvHelper) {
         this.productoRepository = productoRepository;
+        this.csvHelper = csvHelper;
     }
 
     // Obtener todos los productos con categoría y proveedor completos
@@ -63,13 +65,22 @@ public class ProductoService {
 
     public void saveProductosFromCSV(MultipartFile file) {
         if (!CSVHelper.hasCSVFormat(file)) {
-            throw new RuntimeException("Formato de archivo no compatible, debe ser un CSV");
+            throw new IllegalArgumentException("Formato de archivo no compatible, debe ser un CSV");
         }
+
         try {
-            List<Producto> productos = CSVHelper.csvToProductos(file.getInputStream());
+            List<Producto> productos = csvHelper.csvToProductos(file.getInputStream());
+
+            if (productos.isEmpty()) {
+                throw new IllegalArgumentException("El archivo CSV no contiene productos válidos.");
+            }
+
             productoRepository.saveAll(productos);
+
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Error al guardar productos desde CSV: " + e.getMessage());
+            throw new RuntimeException("Error al guardar productos desde CSV", e);
         }
     }
 }

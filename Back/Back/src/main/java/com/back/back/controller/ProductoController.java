@@ -1,6 +1,10 @@
 package com.back.back.controller;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -62,12 +66,13 @@ public class ProductoController {
 
     // Carga masiva de productos desde CSV
     @PostMapping("/upload-csv")
-    public ResponseEntity<String> uploadCSV(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Map<String, String>> uploadCSV(@RequestParam("file") MultipartFile file) {
         try {
             productoService.saveProductosFromCSV(file);
-            return ResponseEntity.ok("Archivo CSV procesado correctamente.");
+            return ResponseEntity.ok(Collections.singletonMap("mensaje", "Archivo CSV procesado correctamente."));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al procesar el archivo CSV: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", "Error al procesar el archivo CSV: " + e.getMessage()));
         }
     }
 }

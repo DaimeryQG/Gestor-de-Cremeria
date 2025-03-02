@@ -2,7 +2,6 @@ package com.back.back.controller;
 
 import com.back.back.model.Proveedor;
 import com.back.back.service.ProveedorService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

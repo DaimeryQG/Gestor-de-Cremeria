@@ -72,11 +72,21 @@
         <!-- Historial de Ventas -->
         <h2 class="text-center mt-5"><i class="fas fa-history"></i> Historial de Ventas</h2>
 
-        <!-- Botón para descargar reporte alineado a la derecha -->
-        <div class="d-flex justify-content-end mb-3">
-            <button class="btn btn-danger" id="descargarPDF">
-                <i class="fas fa-file-pdf"></i> Descargar Reporte PDF
-            </button>
+        <!-- Selector de Fechas para Reporte -->
+        <div class="row my-3">
+            <div class="col-md-5">
+                <label for="fechaInicio" class="form-label">Fecha de Inicio:</label>
+                <input type="datetime-local" id="fechaInicio" class="form-control">
+            </div>
+            <div class="col-md-5">
+                <label for="fechaFin" class="form-label">Fecha de Fin:</label>
+                <input type="datetime-local" id="fechaFin" class="form-control">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button id="descargarPDF" class="btn btn-danger w-100">
+                    <i class="fas fa-file-pdf"></i> Descargar PDF
+                </button>
+            </div>
         </div>
 
         <table class="table table-bordered table-striped mt-3">
@@ -114,6 +124,83 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de confirmación de venta -->
+    <div class="modal fade" id="modalConfirmacionVenta" tabindex="-1" role="dialog"
+        aria-labelledby="modalConfirmacionVentaLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="fas fa-check-circle"></i> Venta Registrada</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h5>🛒 Productos Vendidos:</h5>
+                    <ul id="productosVendidosLista" class="list-group mb-3">
+                        <!-- Aquí se insertarán los productos vendidos dinámicamente -->
+                    </ul>
+                    <p class="mb-0 text-success font-weight-bold">✅ La venta ha sido registrada exitosamente.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔹 Contenedor de Toasts en la parte superior derecha -->
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+        <!-- Toast de Advertencia -->
+        <div id="toastAdvertencia" class="toast align-items-center text-dark bg-warning border-0 fade" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    ⚠️ Debes seleccionar un producto y una cantidad válida.
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Cerrar"></button>
+            </div>
+        </div>
+
+        <!-- Toast de Error en Cantidad -->
+        <div id="toastErrorCantidad" class="toast align-items-center text-white bg-danger border-0 fade" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    ❌ Debes ingresar una cantidad válida (mayor a 0).
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Cerrar"></button>
+            </div>
+        </div>
+
+        <!-- Toast de Stock Insuficiente -->
+        <div id="toastErrorStock" class="toast align-items-center text-white bg-danger border-0 fade" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    ❌ No hay suficiente stock disponible.
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Cerrar"></button>
+            </div>
+        </div>
+
+        <!-- Toast de Éxito (Opcional) -->
+        <div id="toastExito" class="toast align-items-center text-white bg-success border-0 fade" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    ✅ Operación realizada con éxito.
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Cerrar"></button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

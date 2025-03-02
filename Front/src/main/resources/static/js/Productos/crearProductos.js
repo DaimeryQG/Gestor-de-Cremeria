@@ -9,7 +9,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const uploadCsvButton = document.getElementById("uploadCsvButton");
     const csvFileInput = document.getElementById("csvFile");
 
-    // 🔹 Agregar una fila a la tabla de productos
+    const modalConfirmacion = new bootstrap.Modal(document.getElementById('modalConfirmacion'));
+    const modalEliminacion = new bootstrap.Modal(document.getElementById('modalEliminacion'));
+    const modalConfirmacionEliminacion = new bootstrap.Modal(document.getElementById('modalConfirmacionEliminacion'));
+    const modalConfirmacionCSV = new bootstrap.Modal(document.getElementById('modalConfirmacionCSV'));
+    const modalConfirmacionEdicion = new bootstrap.Modal(document.getElementById('modalConfirmacionEdicion'));
+    let productoAEliminar = null;
+
+    // 🔹 Agregar una fila al principio de la tabla de productos
     function agregarFilaProducto(producto) {
         if (!producto || !producto.nombre) {
             console.error("⚠️ Producto inválido recibido del backend.", producto);
@@ -23,13 +30,13 @@ document.addEventListener("DOMContentLoaded", function () {
         fila.innerHTML = `
             <td>${producto.nombre}</td>
             <td>${producto.descripcion || "N/A"}</td>
-            <td>${producto.precio || 0}</td>
+            <td>$${producto.precio.toFixed(2)}</td>
             <td>${producto.stock || 0}</td>
-            <td>${producto.categoria?.nombre || "Sin Categoría"}</td>
-            <td>${producto.proveedor?.nombre || "Sin Proveedor"}</td>
+            <td>${producto.categoria ? producto.categoria.nombre : "Sin Categoría"}</td>
+            <td>${producto.proveedor ? producto.proveedor.nombre : "Sin Proveedor"}</td>
             <td>${producto.fechaCaducidad || "N/A"}</td>
             <td class="text-center">
-                <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${producto.productoId})">
+                <button class="btn btn-danger btn-sm" onclick="confirmarEliminacion(${producto.productoId})">
                     <i class="fas fa-trash"></i>
                 </button>
             </td>
@@ -46,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 </button>
             </td>
         `;
-        productosTableBody.appendChild(fila);
+        productosTableBody.prepend(fila);
     }
 
     window.toggleEstadoProducto = function (id, estadoActual) {
@@ -55,12 +62,12 @@ document.addEventListener("DOMContentLoaded", function () {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ activo: !estadoActual })
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log(`🔄 Estado cambiado a ${data.activo ? "Activo" : "Inactivo"}:`, data);
-            actualizarFilaProducto(data);
-        })
-        .catch(error => console.error("❌ Error al cambiar estado:", error));
+            .then(response => response.json())
+            .then(data => {
+                console.log(`🔄 Estado cambiado a ${data.activo ? "Activo" : "Inactivo"}:`, data);
+                actualizarFilaProducto(data);
+            })
+            .catch(error => console.error("❌ Error al cambiar estado:", error));
     };
 
     // 🔹 Cargar datos del producto en el formulario para editar
@@ -88,20 +95,20 @@ document.addEventListener("DOMContentLoaded", function () {
     // 🔹 Guardar o actualizar un producto
     productoForm.addEventListener("submit", function (event) {
         event.preventDefault();
-
+    
         const formData = new FormData(productoForm);
         const producto = Object.fromEntries(formData.entries());
-
+    
         producto.activo = document.getElementById("activo").checked;
         producto.categoria = producto.categoria ? { categoriaId: Number(producto.categoria) } : null;
         producto.proveedor = producto.proveedor ? { proveedorId: Number(producto.proveedor) } : null;
         producto.fechaCaducidad = document.getElementById("fecha_caducidad").value;
-
+    
         const productoId = productoForm.getAttribute("data-producto-id");
-
+    
         const method = productoId ? "PUT" : "POST";
         const url = productoId ? `${API_URL}/productos/${productoId}` : `${API_URL}/productos`;
-
+    
         fetch(url, {
             method,
             headers: { "Content-Type": "application/json" },
@@ -110,13 +117,22 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(response => response.json())
         .then(data => {
             console.log(`✅ Producto ${productoId ? "actualizado" : "creado"}:`, data);
-            productoId ? actualizarFilaProducto(data) : agregarFilaProducto(data);
+    
+            if (productoId) {
+                actualizarFilaProducto(data);
+                modalConfirmacionEdicion.show(); // ✅ Mostrar modal de confirmación de edición
+            } else {
+                agregarFilaProducto(data);
+                modalConfirmacion.show(); // ✅ Mostrar modal de confirmación de creación
+            }
+    
+            // Resetear el formulario
             productoForm.reset();
             productoForm.removeAttribute("data-producto-id");
         })
         .catch(error => {
             console.error("❌ Error al guardar producto:", error);
-            alert("⚠️ Error al guardar el producto: " + error.message);
+            alert("⚠️ Error al guardar el producto. Revisa la consola.");
         });
     });
 
@@ -134,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <td>${producto.proveedor?.nombre || "Sin Proveedor"}</td>
             <td>${producto.fechaCaducidad || "N/A"}</td>
             <td class="text-center">
-                <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${producto.productoId})">
+                <button class="btn btn-danger btn-sm" onclick="confirmarEliminacion(${producto.productoId})">
                     <i class="fas fa-trash"></i>
                 </button>
             </td>
@@ -153,12 +169,26 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
     }
 
+    window.confirmarEliminacion = function (id) {
+        productoAEliminar = id;
+        modalEliminacion.show();
+    };
+
     // 🔹 Eliminar producto
-    window.eliminarProducto = function (id) {
-        fetch(`${API_URL}/productos/${id}`, { method: "DELETE" })
+    window.eliminarProducto = function () {
+        if (!productoAEliminar) return;
+    
+        fetch(`${API_URL}/productos/${productoAEliminar}`, { method: "DELETE" })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Error al eliminar el producto");
+                }
+                return response.text(); // ⚠️ Usa `text()` en lugar de `json()`
+            })
             .then(() => {
-                alert("🗑️ Producto eliminado.");
-                document.getElementById(`producto-${id}`).remove();
+                document.getElementById(`producto-${productoAEliminar}`).remove();
+                modalEliminacion.hide(); // Cierra el modal de confirmación
+                modalConfirmacionEliminacion.show(); // Muestra el modal de éxito
             })
             .catch(error => console.error("❌ Error al eliminar producto:", error));
     };
@@ -207,22 +237,34 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("⚠️ Por favor selecciona un archivo CSV.");
             return;
         }
-
+    
         const formData = new FormData();
         formData.append("file", file);
-
+    
         fetch(`${API_URL}/productos/upload-csv`, {
             method: "POST",
             body: formData,
         })
-        .then(response => response.text())
-        .then(message => {
-            alert(`✅ ${message}`);
-            $('#csvModal').modal('hide'); // Cerrar modal
-            csvFileInput.value = ""; // Limpiar input
-            cargarProductos(); // Refrescar la lista de productos
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error al subir archivo: ${response.statusText}`);
+            }
+            return response.text(); // Evita error si la respuesta está vacía
         })
-        .catch(error => console.error("❌ Error al subir archivo CSV:", error));
+        .then(() => {
+            modalConfirmacionCSV.show(); // ✅ Mostrar el modal de confirmación
+            $('#csvModal').modal('hide'); // Cierra el modal de carga de CSV
+            csvFileInput.value = ""; // Limpiar el input
+    
+            // 🔄 Esperar 2 segundos antes de actualizar la lista de productos
+            setTimeout(() => {
+                cargarProductos(); // Recargar lista de productos
+            }, 2000);
+        })
+        .catch(error => {
+            console.error("❌ Error al subir archivo CSV:", error);
+            alert("⚠️ Error al subir el archivo CSV. Revisa la consola para más detalles.");
+        });
     });
 
     cargarCategorias();

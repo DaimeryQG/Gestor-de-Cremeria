@@ -17,8 +17,8 @@
     <style>
         /* Ajustar la tabla para mostrar más productos antes del scroll */
         .tabla-container {
-            max-height: 500px;
-            /* Ahora puede mostrar hasta 8 filas antes del scroll */
+            max-height: 600px;
+            /* Ahora puede mostrar más filas antes del scroll */
             overflow-y: auto;
         }
 
@@ -29,6 +29,11 @@
             background-color: white;
             z-index: 10;
         }
+
+        /* Espaciado entre botones en la tabla */
+        .btn-group-table button {
+            margin-right: 5px;
+        }
     </style>
 </head>
 
@@ -38,7 +43,7 @@
 
         <div class="form-container p-4 border rounded shadow-sm">
             <form id="productoForm">
-                <input type="hidden" id="productoId" name="productoId"> <!-- Identificador del producto -->
+                <input type="hidden" id="productoId" name="productoId">
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="nombre">Nombre:</label>
@@ -52,7 +57,8 @@
                 <div class="form-row">
                     <div class="form-group col-md-4">
                         <label for="precio">Precio:</label>
-                        <input type="number" id="precio" name="precio" class="form-control" step="0.01" required>
+                        <input type="number" id="precio" name="precio" class="form-control" step="0.01" min="0.01"
+                            required>
                     </div>
                     <div class="form-group col-md-4">
                         <label for="stock">Stock:</label>
@@ -92,10 +98,10 @@
             </form>
         </div>
 
-        <!-- Botón de carga masiva alineado a la derecha debajo del formulario -->
+        <!-- Botón de carga masiva -->
         <div class="d-flex justify-content-end mt-3">
             <button class="btn btn-info px-4 py-2" data-toggle="modal" data-target="#csvModal"
-                style="font-size: 1.1rem; font-weight: 500;">
+                data-bs-target="#csvModal">
                 <i class="fas fa-file-upload"></i> Carga Masiva
             </button>
         </div>
@@ -106,8 +112,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="csvModalLabel"><i class="fas fa-file-csv"></i> Subir Archivo CSV
-                        </h5>
+                        <h5 class="modal-title"><i class="fas fa-file-csv"></i> Subir Archivo CSV</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -127,7 +132,7 @@
             </div>
         </div>
 
-
+        <!-- Tabla de productos -->
         <h2 class="text-center mt-5"><i class="fas fa-list"></i> Lista de Productos</h2>
         <div class="tabla-container">
             <table class="table table-bordered table-striped">
@@ -146,29 +151,114 @@
                     </tr>
                 </thead>
                 <tbody id="productosTableBody">
-                    <!-- Datos de productos se llenarán dinámicamente -->
+                    <!-- Se llenará dinámicamente -->
+                    </td>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Modal de éxito al agregar un producto -->
-    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
+    <!-- Modal de confirmación -->
+    <div class="modal fade" id="modalConfirmacion" tabindex="-1" role="dialog" aria-labelledby="modalConfirmacionLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title" id="successModalLabel"><i class="fas fa-check-circle"></i> Producto Agregado
-                    </h5>
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-check-circle"></i> Producto Guardado</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    El producto ha sido agregado exitosamente a la lista.
+                    El producto ha sido agregado correctamente.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-dismiss="modal">Aceptar</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación de eliminación -->
+    <div class="modal fade" id="modalEliminacion" tabindex="-1" role="dialog" aria-labelledby="modalEliminacionLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="fas fa-trash"></i> Confirmar Eliminación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" onclick="eliminarProducto()">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación de eliminación exitosa -->
+    <div class="modal fade" id="modalConfirmacionEliminacion" tabindex="-1" role="dialog"
+        aria-labelledby="modalConfirmacionEliminacionLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="fas fa-check-circle"></i> Producto Eliminado</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    El producto ha sido eliminado correctamente.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación de carga de CSV -->
+    <div class="modal fade" id="modalConfirmacionCSV" tabindex="-1" role="dialog"
+        aria-labelledby="modalConfirmacionCSVLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="fas fa-file-csv"></i> Archivo CSV Procesado</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    El archivo CSV ha sido procesado correctamente.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación de edición -->
+    <div class="modal fade" id="modalConfirmacionEdicion" tabindex="-1" role="dialog"
+        aria-labelledby="modalConfirmacionEdicionLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title"><i class="fas fa-edit"></i> Producto Editado</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ✅ El producto ha sido editado correctamente.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
                 </div>
             </div>
         </div>

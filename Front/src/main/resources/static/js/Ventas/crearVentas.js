@@ -8,6 +8,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const totalVentaSpan = document.getElementById("totalVenta");
     const registrarVentaBtn = document.getElementById("registrarVenta");
     const ventasTableBody = document.getElementById("ventasTableBody");
+    const modalConfirmacionVenta = new bootstrap.Modal(document.getElementById('modalConfirmacionVenta'));
+
+    const toastAdvertencia = new bootstrap.Toast(document.getElementById("toastAdvertencia"));
+    const toastErrorCantidad = new bootstrap.Toast(document.getElementById("toastErrorCantidad"));
+    const toastErrorStock = new bootstrap.Toast(document.getElementById("toastErrorStock"));
 
     let detallesVenta = [];
     let productosDisponibles = [];
@@ -32,35 +37,55 @@ document.addEventListener("DOMContentLoaded", function () {
     /** 🔹 Agregar producto a la lista de venta */
     document.getElementById("agregarProducto").addEventListener("click", function () {
         const productoId = parseInt(productoSelect.value);
-        const cantidad = parseInt(cantidadInput.value);
+        const cantidad = cantidadInput.value.trim();
 
-        if (!productoId || cantidad < 1) {
-            alert("⚠️ Debes seleccionar un producto y una cantidad válida.");
+        if (!cantidad || isNaN(cantidad) || parseInt(cantidad) <= 0) {
+            console.warn("❌ Error: Cantidad no válida.");
+            mostrarToast('toastErrorCantidad'); // ✅ Mostrar Toast de Error
+            return;
+        }
+
+        const cantidadNum = parseInt(cantidad);
+        if (!productoId) {
+            console.warn("⚠️ Error: Producto no seleccionado.");
+            mostrarToast('toastAdvertencia'); // ✅ Mostrar Toast de Advertencia
             return;
         }
 
         const producto = productosDisponibles.find(p => p.productoId === productoId);
         if (!producto) {
-            alert("⚠️ Producto no encontrado.");
+            console.warn("⚠️ Error: Producto no encontrado.");
+            mostrarToast('toastAdvertencia');
             return;
         }
 
-        // Verificar si el producto ya está en la lista y actualizar cantidad en lugar de duplicarlo
+        if (producto.stock < cantidadNum) {
+            console.warn(`❌ Stock insuficiente para ${producto.nombre}. Disponible: ${producto.stock}`);
+            mostrarToast('toastErrorStock'); // ✅ Mostrar Toast de Stock Insuficiente
+            return;
+        }
+
         const existente = detallesVenta.find(det => det.producto.productoId === productoId);
         if (existente) {
-            existente.cantidad += cantidad;
+            if ((existente.cantidad + cantidadNum) > producto.stock) {
+                console.warn(`❌ No puedes agregar más de ${producto.stock} unidades de ${producto.nombre}.`);
+                mostrarToast('toastErrorStock');
+                return;
+            }
+            existente.cantidad += cantidadNum;
             existente.subtotal = existente.cantidad * existente.precioUnitario;
         } else {
             detallesVenta.push({
                 producto: { productoId },
-                cantidad,
+                cantidad: cantidadNum,
                 precioUnitario: producto.precio,
-                subtotal: producto.precio * cantidad
+                subtotal: producto.precio * cantidadNum
             });
         }
 
         actualizarTablaVenta();
         actualizarTotal();
+        cantidadInput.value = "";
     });
 
     /** 🔹 Actualizar tabla de detalle de venta */
@@ -96,6 +121,16 @@ document.addEventListener("DOMContentLoaded", function () {
         actualizarTotal();
     }
 
+    function mostrarToast(idToast) {
+        const toastElement = document.getElementById(idToast);
+        if (toastElement) {
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        } else {
+            console.warn(`⚠️ No se encontró el toast con ID: ${idToast}`);
+        }
+    }
+
     /** 🔹 Calcular total de la venta */
     function actualizarTotal() {
         const total = detallesVenta.reduce((sum, det) => sum + det.subtotal, 0);
@@ -122,11 +157,35 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .then(data => {
                 console.log("✅ Venta registrada exitosamente:", data);
+
+                // ✅ Limpiar la lista de productos vendidos antes de agregar nuevos
+                const productosVendidosLista = document.getElementById("productosVendidosLista");
+                productosVendidosLista.innerHTML = "";
+
+                // ✅ Agregar productos vendidos a la lista dentro del modal
+                detallesVenta.forEach(detalle => {
+                    const producto = productosDisponibles.find(p => p.productoId === detalle.producto.productoId);
+                    if (producto) {
+                        const item = document.createElement("li");
+                        item.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
+                        item.innerHTML = `
+                        <span>${producto.nombre} (${detalle.cantidad}x)</span>
+                        <span class="badge badge-success badge-pill">$${detalle.subtotal.toFixed(2)}</span>
+                    `;
+                        productosVendidosLista.appendChild(item);
+                    }
+                });
+
+                // ✅ Resetear los detalles de venta y actualizar la tabla
                 detallesVenta = [];
                 detalleVentaBody.innerHTML = "";
                 actualizarTotal();
-                $("#successModal").modal("show"); // Mostrar modal de éxito
-                cargarVentas(); // Refrescar historial de ventas
+
+                // ✅ Mostrar el modal de confirmación con la lista de productos vendidos
+                modalConfirmacionVenta.show();
+
+                // ✅ Cargar ventas nuevamente para actualizar la lista
+                cargarVentas();
             })
             .catch(error => {
                 console.error("❌ Error al registrar la venta:", error);
@@ -155,19 +214,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /** 🔹 Generar y Descargar Reporte PDF */
     document.getElementById("descargarPDF").addEventListener("click", function () {
-        fetch(`${API_URL}/ventas`)
-            .then(response => response.json())
+        const fechaInicio = document.getElementById("fechaInicio").value;
+        const fechaFin = document.getElementById("fechaFin").value;
+    
+        if (!fechaInicio || !fechaFin) {
+            alert("⚠️ Debes seleccionar un rango de fechas para generar el reporte.");
+            return;
+        }
+    
+        fetch(`${API_URL}/reportes/ventas?inicio=${fechaInicio}&fin=${fechaFin}`)
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+                return response.json();
+            })
             .then(ventas => {
-                if (ventas.length === 0) {
-                    alert("⚠️ No hay ventas registradas para generar el reporte.");
+                if (!Array.isArray(ventas)) {
+                    console.error("❌ Respuesta inesperada de la API:", ventas);
+                    alert("⚠️ Error al generar el reporte: Formato de datos incorrecto.");
                     return;
                 }
-
-                // Crear un nuevo documento PDF con jsPDF desde window.jspdf
+    
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF();
-                let startY = 20; // Posición inicial en el PDF
-
+                let startY = 20;
+    
                 pdf.setFont("helvetica", "bold");
                 pdf.setFontSize(18);
                 pdf.text("Reporte de Ventas", 14, startY);
@@ -175,28 +247,27 @@ document.addEventListener("DOMContentLoaded", function () {
                 pdf.setFontSize(12);
                 pdf.text(`Fecha: ${new Date().toLocaleDateString()}`, 14, startY);
                 startY += 10;
-
-                // Recorrer cada venta y agregar detalles al PDF
+                pdf.text(`Período: ${fechaInicio} - ${fechaFin}`, 14, startY);
+                startY += 10;
+    
                 ventas.forEach(venta => {
-                    pdf.setFont("helvetica", "bold");
+                    pdf.setFontSize(14);
+                    pdf.setTextColor(0, 128, 0); // Verde
                     pdf.text(`Venta ID: ${venta.ventaId} - Total: $${venta.total.toFixed(2)}`, 14, startY);
                     startY += 8;
                     pdf.setFontSize(10);
                     pdf.text(`Fecha: ${new Date(venta.fechaVenta).toLocaleString()}`, 14, startY);
                     startY += 6;
-
-                    // Verificar si la venta tiene productos
+    
                     if (venta.detalles && venta.detalles.length > 0) {
-                        const columnas = ["Nombre", "Precio", "Cantidad", "Precio Unitario", "Subtotal"];
+                        const columnas = ["Producto", "Cantidad", "Precio Unitario", "Subtotal"];
                         const filas = venta.detalles.map(detalle => [
                             detalle.producto.nombre,
-                            `$${detalle.producto.precio.toFixed(2)}`,
                             detalle.cantidad,
                             `$${detalle.precioUnitario.toFixed(2)}`,
                             `$${detalle.subtotal.toFixed(2)}`
                         ]);
-
-                        // Agregar tabla con detalles de productos vendidos
+    
                         pdf.autoTable({
                             head: [columnas],
                             body: filas,
@@ -205,16 +276,15 @@ document.addEventListener("DOMContentLoaded", function () {
                             styles: { fontSize: 10 },
                             margin: { left: 14, right: 14 }
                         });
-
-                        startY = pdf.lastAutoTable.finalY + 10; // Ajustar para la siguiente venta
+    
+                        startY = pdf.lastAutoTable.finalY + 10;
                     } else {
                         pdf.setFont("helvetica", "italic");
                         pdf.text("Sin productos registrados en esta venta.", 14, startY);
                         startY += 10;
                     }
                 });
-
-                // Descargar el archivo PDF
+    
                 pdf.save("Reporte_Ventas.pdf");
             })
             .catch(error => {
@@ -222,8 +292,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert("⚠️ Error al generar el reporte en PDF.");
             });
     });
-
-
+    
+    
     /** 🔹 Cargar datos al inicio */
     cargarProductos();
     cargarVentas();
