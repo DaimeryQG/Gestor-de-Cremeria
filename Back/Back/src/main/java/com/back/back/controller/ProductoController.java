@@ -1,6 +1,7 @@
 package com.back.back.controller;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +63,40 @@ public class ProductoController {
     public ResponseEntity<Void> deleteProducto(@PathVariable Long id) {
         productoService.deleteProducto(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Desactivar un producto
+    @PutMapping("/desactivar/{id}")
+    public ResponseEntity<Map<String, String>> desactivarProducto(@PathVariable Long id) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            productoService.desactivar(id);
+            response.put("mensaje", "Producto desactivado correctamente.");
+            return ResponseEntity.ok(response);
+        } catch (ProductoService.ResourceNotFoundException e) {
+            response.put("error", "Producto no encontrado.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception e) {
+            response.put("error", "Error al desactivar el producto.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    // Activar un producto
+    @PutMapping("/activar/{id}")
+    public ResponseEntity<Map<String, String>> activarProducto(@PathVariable Long id) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            productoService.activar(id);
+            response.put("mensaje", "Producto activado correctamente.");
+            return ResponseEntity.ok(response);
+        } catch (ProductoService.ResourceNotFoundException e) {
+            response.put("error", "Producto no encontrado.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception e) {
+            response.put("error", "Error al activar el producto.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     // Carga masiva de productos desde CSV

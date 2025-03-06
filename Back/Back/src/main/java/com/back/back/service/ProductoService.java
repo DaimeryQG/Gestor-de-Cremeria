@@ -83,4 +83,25 @@ public class ProductoService {
             throw new RuntimeException("Error al guardar productos desde CSV", e);
         }
     }
+
+    public void desactivar(Long id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
+        producto.setActivo(false); // Suponiendo que el campo `activo` es booleano
+        productoRepository.save(producto);
+    }
+
+    public static class ResourceNotFoundException extends RuntimeException {
+        public ResourceNotFoundException(String message) {
+            super(message);
+        }
+    }
+
+    // ✅ Método para activar un producto
+    public void activar(Long id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
+        producto.setActivo(true);
+        productoRepository.save(producto);
+    }
 }
