@@ -5,6 +5,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.back.back.exception.BadRequestException;
+import com.back.back.exception.CSVFormatException;
+import com.back.back.exception.ResourceNotFoundException;
 import com.back.back.model.Producto;
 import com.back.back.repository.ProductoRepository;
 import com.back.back.utils.CSVHelper;
@@ -13,6 +16,7 @@ import com.back.back.utils.CSVHelper;
 public class ProductoService {
 
     private final ProductoRepository productoRepository;
+    
     private final CSVHelper csvHelper;
 
     public ProductoService(ProductoRepository productoRepository, CSVHelper csvHelper) {
@@ -20,23 +24,18 @@ public class ProductoService {
         this.csvHelper = csvHelper;
     }
 
-    // Obtener todos los productos con categoría y proveedor completos
     public List<Producto> getAllProductosWithRelations() {
         return productoRepository.findAllWithRelations();
     }
 
-    // ✅ Agregar este método para obtener un producto por ID con sus relaciones completas
     public Optional<Producto> getProductoByIdWithRelations(Long id) {
         return productoRepository.findByIdWithRelations(id);
     }
 
-    // Guardar un producto y devolverlo con categoría y proveedor completos
     public Producto saveProducto(Producto producto) {
-        Producto nuevoProducto = productoRepository.save(producto);
-        return productoRepository.findByIdWithRelations(nuevoProducto.getProductoId()).orElse(nuevoProducto);
+        return productoRepository.save(producto);
     }
 
-    // Actualizar un producto manteniendo su categoría y proveedor
     public Producto updateProducto(Long id, Producto producto) {
         return productoRepository.findByIdWithRelations(id)
                 .map(existingProducto -> {
@@ -47,7 +46,6 @@ public class ProductoService {
                     existingProducto.setFechaCaducidad(producto.getFechaCaducidad());
                     existingProducto.setActivo(producto.isActivo());
 
-                    // Asegurar que la categoría y el proveedor no se pierdan
                     if (producto.getCategoria() != null) {
                         existingProducto.setCategoria(producto.getCategoria());
                     }
@@ -56,29 +54,30 @@ public class ProductoService {
                     }
 
                     return productoRepository.save(existingProducto);
-                }).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                }).orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
     }
 
     public void deleteProducto(Long id) {
+        if (!productoRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Producto no encontrado");
+        }
         productoRepository.deleteById(id);
     }
 
     public void saveProductosFromCSV(MultipartFile file) {
         if (!CSVHelper.hasCSVFormat(file)) {
-            throw new IllegalArgumentException("Formato de archivo no compatible, debe ser un CSV");
+            throw new CSVFormatException("Formato de archivo no compatible, debe ser un CSV");
         }
 
         try {
             List<Producto> productos = csvHelper.csvToProductos(file.getInputStream());
 
             if (productos.isEmpty()) {
-                throw new IllegalArgumentException("El archivo CSV no contiene productos válidos.");
+                throw new BadRequestException("El archivo CSV no contiene productos válidos.");
             }
 
             productoRepository.saveAll(productos);
 
-        } catch (IllegalArgumentException e) {
-            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error al guardar productos desde CSV", e);
         }
@@ -87,17 +86,10 @@ public class ProductoService {
     public void desactivar(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
-        producto.setActivo(false); // Suponiendo que el campo `activo` es booleano
+        producto.setActivo(false);
         productoRepository.save(producto);
     }
 
-    public static class ResourceNotFoundException extends RuntimeException {
-        public ResourceNotFoundException(String message) {
-            super(message);
-        }
-    }
-
-    // ✅ Método para activar un producto
     public void activar(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
