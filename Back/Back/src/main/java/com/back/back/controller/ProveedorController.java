@@ -17,13 +17,11 @@ public class ProveedorController {
         this.proveedorService = proveedorService;
     }
 
-    // Obtener todos lo productos
     @GetMapping
     public List<Proveedor> getAllProveedores() {
         return proveedorService.getAllProveedores();
     }
 
-    // Crear un producto
     @PostMapping
     public Proveedor createProveedor(@RequestBody Proveedor proveedor) {
         return proveedorService.saveProveedor(proveedor);

@@ -24,22 +24,31 @@ public class VentaService {
 
     @Transactional
     public Venta registrarVenta(List<DetalleVenta> detalles) {
+        if (detalles == null || detalles.isEmpty()) {
+            throw new IllegalArgumentException("La venta debe contener al menos un producto.");
+        }
+
         BigDecimal totalVenta = BigDecimal.ZERO;
         Venta venta = new Venta();
 
         for (DetalleVenta detalle : detalles) {
+            if (detalle.getCantidad() <= 0) {
+                throw new IllegalArgumentException("La cantidad debe ser mayor a 0.");
+            }
+            if (detalle.getPrecioUnitario() == null || detalle.getPrecioUnitario().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new IllegalArgumentException("El precio unitario debe ser mayor a 0.");
+            }
+
             Producto producto = productoRepository.findById(detalle.getProducto().getProductoId())
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                    .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + detalle.getProducto().getProductoId()));
 
             if (producto.getStock() < detalle.getCantidad()) {
                 throw new RuntimeException("Stock insuficiente para el producto: " + producto.getNombre());
             }
 
-            // Descontar stock
             producto.setStock(producto.getStock() - detalle.getCantidad());
             productoRepository.save(producto);
 
-            // Calcular subtotal
             detalle.setPrecioUnitario(producto.getPrecio());
             detalle.setSubtotal(producto.getPrecio().multiply(BigDecimal.valueOf(detalle.getCantidad())));
             totalVenta = totalVenta.add(detalle.getSubtotal());
@@ -52,6 +61,12 @@ public class VentaService {
     }
 
     public List<Venta> obtenerVentas() {
-        return ventaRepository.findAll();
+        List<Venta> ventas = ventaRepository.findAll();
+
+        if (ventas.isEmpty()) {
+            throw new RuntimeException("No hay ventas registradas en el sistema.");
+        }
+
+        return ventas;
     }
 }

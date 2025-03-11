@@ -32,48 +32,41 @@ public class RegistroController {
 
     @GetMapping("/{id}")
     public ResponseEntity<RegistroDTO> obtenerPorId(@PathVariable Long id) {
-        RegistroDTO registroDTO = RegistroMapper.toDTO(registroService.obtenerPorId(id));
-        return ResponseEntity.ok(registroDTO);
+        return ResponseEntity.ok(RegistroMapper.toDTO(registroService.obtenerPorId(id)));
     }
 
     @PostMapping("/registrar")
-    public ResponseEntity<?> registrar(@RequestBody Registro registro) {
+    public ResponseEntity<Void> registrar(@RequestBody Registro registro) {
         registroService.registrar(registro);
-        return ResponseEntity.ok().body(Map.of("message", "Registro creado exitosamente."));
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Registro registro) {
+    public ResponseEntity<Void> actualizar(@PathVariable Long id, @RequestBody Registro registro) {
         registroService.actualizar(id, registro);
-        return ResponseEntity.ok().body(Map.of("message", "Registro actualizado correctamente."));
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         registroService.eliminar(id);
-        return ResponseEntity.ok().body(Map.of("message", "Registro eliminado correctamente."));
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/desactivar/{id}")
-    public ResponseEntity<?> desactivarUsuario(@PathVariable Long id) {
+    public ResponseEntity<Void> desactivarUsuario(@PathVariable Long id) {
         registroService.desactivar(id);
-        return ResponseEntity.ok().body(Map.of("message", "Usuario desactivado correctamente."));
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/activar/{id}")
-    public ResponseEntity<?> activarUsuario(@PathVariable Long id) {
+    public ResponseEntity<Void> activarUsuario(@PathVariable Long id) {
         registroService.activar(id);
-        return ResponseEntity.ok().body(Map.of("message", "Usuario activado correctamente."));
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/buscar")
     public ResponseEntity<?> buscarPorUnCampo(@RequestBody Map<String, String> filtros) {
-        if (!filtros.containsKey("campo") || !filtros.containsKey("valor")) {
-        }
-
-        String campo = filtros.get("campo");
-        String valor = filtros.get("valor");
-
-        return ResponseEntity.ok(registroService.buscarPorUnCampo(campo, valor));
+        return ResponseEntity.ok(registroService.buscarPorUnCampo(filtros));
     }
 }

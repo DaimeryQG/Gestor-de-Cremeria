@@ -1,36 +1,36 @@
 package com.back.back.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.back.back.model.Registro;
+import com.back.back.model.ResponseMessage;
 import com.back.back.repository.LoginRepository;
+import org.springframework.http.HttpStatus;
 
 @Service
 public class LoginService {
 
-    @Autowired
-    private LoginRepository loginRepository;
+    private final LoginRepository loginRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-    
-    public boolean verificarCredenciales(String username, String passwordIngresada) {
-        // Intentamos obtener el usuario usando Optional
-        Registro usuario = loginRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        // Verificamos que la contraseña ingresada coincida con la almacenada
-        return passwordEncoder.matches(passwordIngresada, usuario.getPassword());
+    public LoginService(LoginRepository loginRepository, BCryptPasswordEncoder passwordEncoder) {
+        this.loginRepository = loginRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public boolean verificarEstadoUsuario(String username) {
-        // Intentamos obtener el usuario usando Optional
+    public ResponseMessage login(String username, String passwordIngresada) {
         Registro usuario = loginRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Verificamos si el usuario está activo
-        return usuario.isActivo(); // Retorna true si el usuario está activo, false si está inactivo
-    }    
+        if (!passwordEncoder.matches(passwordIngresada, usuario.getPassword())) {
+            throw new RuntimeException("Credenciales incorrectas");
+        }
+
+        if (!usuario.isActivo()) {
+            throw new RuntimeException("Usuario inactivo. Por favor, contacte con el administrador.");
+        }
+
+        return new ResponseMessage("Autenticado correctamente", HttpStatus.OK.value());
+    }
 }

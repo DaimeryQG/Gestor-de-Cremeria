@@ -17,13 +17,11 @@ public class CategoriaController {
         this.categoriaService = categoriaService;
     }
 
-    // Obtener todos las categorias
     @GetMapping
     public List<Categoria> getAllCategorias() {
         return categoriaService.getAllCategorias();
     }
 
-    // Crear un producto
     @PostMapping
     public Categoria createCategoria(@RequestBody Categoria categoria) {
         return categoriaService.saveCategoria(categoria);

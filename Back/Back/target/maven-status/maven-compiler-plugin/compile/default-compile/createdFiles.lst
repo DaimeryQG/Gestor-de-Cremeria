@@ -8,7 +8,6 @@ com\back\back\model\LoginRequest.class
 com\back\back\repository\ProductoRepository.class
 com\back\back\model\ResponseMessage.class
 com\back\back\service\ProductoService.class
-com\back\back\service\RegistroService$ResourceNotFoundException.class
 com\back\back\model\Rol.class
 com\back\back\model\Producto.class
 com\back\back\config\SecurityConfig.class

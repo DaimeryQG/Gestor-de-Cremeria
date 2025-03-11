@@ -1,7 +1,7 @@
 package com.back.back.controller;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +25,7 @@ public class ProductoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Producto>> getProductoById(@PathVariable Long id) {
+    public ResponseEntity<Producto> getProductoById(@PathVariable Long id) {
         return ResponseEntity.ok(productoService.getProductoByIdWithRelations(id));
     }
 
@@ -51,15 +51,20 @@ public class ProductoController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/{id}/desactivar")
+    @PatchMapping("/desactivar/{id}")
     public ResponseEntity<Void> desactivarProducto(@PathVariable Long id) {
         productoService.desactivar(id);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/{id}/activar")
+    @PatchMapping("/activar/{id}")
     public ResponseEntity<Void> activarProducto(@PathVariable Long id) {
         productoService.activar(id);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/buscar")
+    public ResponseEntity<?> buscarPorUnCampo(@RequestBody Map<String, String> filtros) {
+        return ResponseEntity.ok(productoService.buscarPorUnCampo(filtros));
     }
 }

@@ -1,12 +1,17 @@
 package com.back.back.service;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.back.back.exception.BadRequestException;
 import com.back.back.exception.CSVFormatException;
+import com.back.back.exception.ConflictException;
 import com.back.back.exception.ResourceNotFoundException;
 import com.back.back.model.Producto;
 import com.back.back.repository.ProductoRepository;
@@ -16,7 +21,7 @@ import com.back.back.utils.CSVHelper;
 public class ProductoService {
 
     private final ProductoRepository productoRepository;
-    
+
     private final CSVHelper csvHelper;
 
     public ProductoService(ProductoRepository productoRepository, CSVHelper csvHelper) {
@@ -28,15 +33,33 @@ public class ProductoService {
         return productoRepository.findAllWithRelations();
     }
 
-    public Optional<Producto> getProductoByIdWithRelations(Long id) {
-        return productoRepository.findByIdWithRelations(id);
+    public Producto getProductoByIdWithRelations(Long id) {
+        return productoRepository.findByIdWithRelations(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
     }
 
     public Producto saveProducto(Producto producto) {
+        Optional<Producto> productoExistente = productoRepository.findByNombre(
+                producto.getNombre());
+
+        if (productoExistente.isPresent()) {
+            Producto existente = productoExistente.get();
+            String mensajeError = "Conflicto: ";
+
+            if (existente.getNombre().equals(producto.getNombre())) {
+                mensajeError += "El nombre de usuario ya está en uso. ";
+            }
+
+            throw new ConflictException(mensajeError.trim());
+        }
         return productoRepository.save(producto);
     }
 
     public Producto updateProducto(Long id, Producto producto) {
+        if (!producto.isActivo()) {
+            throw new IllegalStateException("No se puede actualizar el producto porque no está activo.");
+        }
+
         return productoRepository.findByIdWithRelations(id)
                 .map(existingProducto -> {
                     existingProducto.setNombre(producto.getNombre());
@@ -58,9 +81,13 @@ public class ProductoService {
     }
 
     public void deleteProducto(Long id) {
-        if (!productoRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Producto no encontrado");
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
+
+        if (!producto.isActivo()) {
+            throw new IllegalStateException("No se puede eliminar el producto porque no está activo.");
         }
+
         productoRepository.deleteById(id);
     }
 
@@ -96,4 +123,40 @@ public class ProductoService {
         producto.setActivo(true);
         productoRepository.save(producto);
     }
+
+    public List<Producto> buscarPorUnCampo(Map<String, String> filtros) {
+        if (!filtros.containsKey("campo") || !filtros.containsKey("valor")) {
+            throw new BadRequestException("Debe proporcionar los parámetros 'campo' y 'valor'.");
+        }
+
+        String campo = filtros.get("campo");
+        String valor = filtros.get("valor");
+
+        if (!esCampoValido(campo)) {
+            throw new BadRequestException("Campo de búsqueda '" + campo + "' no es válido.");
+        }
+
+        Specification<Producto> spec;
+        if ("activo".equalsIgnoreCase(campo)) {
+            boolean valorBooleano = Boolean.parseBoolean(valor);
+            spec = (root, query, cb) -> cb.equal(root.get(campo), valorBooleano);
+        } else {
+            spec = (root, query, cb) -> cb.like(cb.lower(root.get(campo)), "%" + valor.toLowerCase() + "%");
+        }
+
+        List<Producto> resultados = productoRepository.findAll(spec);
+        if (resultados.isEmpty()) {
+            throw new ResourceNotFoundException("No se encontraron registros con " + campo + " = '" + valor + "'.");
+        }
+
+        return resultados;
+    }
+
+    private boolean esCampoValido(String campo) {
+        List<String> camposValidos = Arrays.asList(
+                "nombre", "descripcion", "precio", "stock", "categoria", "proveedor",
+                "fechaCaducidad", "fechaRegistro", "activo");
+        return camposValidos.contains(campo);
+    }
 }
+ 

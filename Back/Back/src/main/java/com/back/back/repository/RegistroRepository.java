@@ -8,13 +8,11 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import com.back.back.model.Registro;
 
 public interface RegistroRepository extends JpaRepository<Registro, Long>, JpaSpecificationExecutor<Registro> {
-    boolean existsByUsername(String username); // Método para verificar si un nombre de usuario ya existe
+    Optional<Registro> findByUsernameOrCorreoOrCurpOrRfcOrTelefono(String username, String correo, String curp, String rfc, String telefono);
     
     List<Registro> findByNombre(String nombre); // Buscar por nombre
 
     Optional<Registro> findById(Long id); // Buscar por id
 
-    boolean existsByRfcOrCurp(String rfc, String curp);
-    
     List<Registro> findByActivoTrue();  // Retorna solo registros activos
 }
