@@ -1,17 +1,18 @@
-# Ignorar archivos de sistema
-.DS_Store
-Thumbs.db
-
-# Ignorar dependencias
-node_modules/
-venv/
-__pycache__/
-
-# Ignorar archivos de compilación
-dist/
-build/
+# Ignorar archivos compilados de Java
 *.class
 
-# Ignorar configuraciones de editores
-.vscode/
+# Ignorar directorios generados por Maven y compilación
+target/
+bin/
+out/
+
+# Ignorar configuraciones de Eclipse/IntelliJ
+.metadata/
+.settings/
+.classpath
+.project
 .idea/
+*.iml
+
+# Ignorar dependencias descargadas
+.mvn/
