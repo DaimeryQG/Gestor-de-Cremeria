@@ -159,4 +159,22 @@ public class RegistroService {
                 "estado", "fechaRegistro", "username", "activo");
         return camposValidos.contains(campo);
     }
+
+    public List<Registro> buscarPorFiltros(Map<String, List<String>> filtros) {
+        // Mapear los filtros a las listas que van a ser pasadas a la consulta
+        List<String> nombres = filtros.get("nombre");
+        List<String> correos = filtros.get("correo");
+        List<String> telefonos = filtros.get("telefono");
+        List<String> direcciones = filtros.get("direccion");
+        List<String> rfcs = filtros.get("rfc");
+        List<String> curps = filtros.get("curp");
+        List<String> paises = filtros.get("pais");
+        List<String> estados = filtros.get("estado");
+        List<String> fechasRegistro = filtros.get("fechaRegistro");
+        List<String> usernames = filtros.get("username");
+        Boolean activo = filtros.containsKey("activo") ? Boolean.parseBoolean(filtros.get("activo").get(0)) : null;
+        List<Long> roles = filtros.containsKey("rol") ? filtros.get("rol").stream().map(Long::parseLong).toList() : null;
+
+        return registroRepository.buscarPorFiltros(nombres, correos, telefonos, direcciones, rfcs, curps, paises, estados, fechasRegistro, usernames, activo, roles);
+    }
 }

@@ -2,9 +2,12 @@ package com.back.back.controller;
 
 import com.back.back.model.Proveedor;
 import com.back.back.service.ProveedorService;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = { "http://127.0.0.1:8080", "http://localhost:8080" })
@@ -22,8 +25,38 @@ public class ProveedorController {
         return proveedorService.getAllProveedores();
     }
 
+    @GetMapping("/{id}")
+    public Proveedor getProveedorById(@PathVariable Long id) {
+        return proveedorService.getProveedorById(id);
+    }
+
     @PostMapping
     public Proveedor createProveedor(@RequestBody Proveedor proveedor) {
         return proveedorService.saveProveedor(proveedor);
+    }
+
+    @PutMapping("/{id}")
+    public Proveedor updateProveedor(@PathVariable Long id, @RequestBody Proveedor proveedor) {
+        return proveedorService.updateProveedor(id, proveedor);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteProveedor(@PathVariable Long id) {
+        proveedorService.deleteProveedor(id);
+    }
+
+    @PatchMapping("/activar/{id}")
+    public void activarProveedor(@PathVariable Long id) {
+        proveedorService.activar(id);
+    }
+
+    @PatchMapping("/desactivar/{id}")
+    public void desactivarProveedor(@PathVariable Long id) {
+        proveedorService.desactivar(id);
+    }
+
+    @PostMapping("/buscar")
+    public ResponseEntity<?> buscarPorUnCampo(@RequestBody Map<String, String> filtros) {
+        return ResponseEntity.ok(proveedorService.buscarPorUnCampo(filtros));
     }
 }

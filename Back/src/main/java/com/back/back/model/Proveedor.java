@@ -21,7 +21,8 @@ public class Proveedor {
     private String correo;
     private String direccion;
 
-    private int estado;  // 1 = Activo, 0 = Inactivo
+    // Cambiar estado de int a boolean para indicar si está activo
+    private boolean activo = true;  // true = Activo, false = Inactivo
 
     // Getters and setters
     public int getProveedorId() {
@@ -64,11 +65,11 @@ public class Proveedor {
         this.direccion = direccion;
     }
 
-    public int getEstado() {
-        return estado;
+    public boolean isActivo() {
+        return activo;
     }
 
-    public void setEstado(int estado) {
-        this.estado = estado;
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 }

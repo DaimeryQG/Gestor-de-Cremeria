@@ -1,7 +1,7 @@
 package com.back.back.controller;
 
-import com.back.back.model.DetalleVenta;
 import com.back.back.model.Venta;
+import com.back.back.model.VentaRequest;
 import com.back.back.service.VentaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +20,12 @@ public class VentaController {
     }
 
     @PostMapping
-    public ResponseEntity<Venta> registrarVenta(@RequestBody List<DetalleVenta> detalles) {
-        return ResponseEntity.ok(ventaService.registrarVenta(detalles));
+    public ResponseEntity<Venta> registrarVenta(@RequestBody VentaRequest ventaRequest) {
+        Venta venta = ventaService.registrarVenta(
+                ventaRequest.getUsuario(),
+                ventaRequest.getRol(),
+                ventaRequest.getDetalles());
+        return ResponseEntity.ok(venta);
     }
 
     @GetMapping

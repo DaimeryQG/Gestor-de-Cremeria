@@ -69,4 +69,15 @@ public class RegistroController {
     public ResponseEntity<?> buscarPorUnCampo(@RequestBody Map<String, String> filtros) {
         return ResponseEntity.ok(registroService.buscarPorUnCampo(filtros));
     }
+
+    @PostMapping("/buscar/dinamico")
+    public ResponseEntity<List<RegistroDTO>> buscarDinamico(@RequestBody Map<String, List<String>> filtros) {
+        List<Registro> registros = registroService.buscarPorFiltros(filtros);
+
+        List<RegistroDTO> registroDTOs = registros.stream()
+                .map(RegistroMapper::toDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(registroDTOs);
+    }
 }

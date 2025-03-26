@@ -4,7 +4,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.back.back.model.Registro;
-import com.back.back.model.ResponseMessage;
+import com.back.back.model.LoginResponse;
 import com.back.back.repository.LoginRepository;
 import org.springframework.http.HttpStatus;
 
@@ -19,7 +19,7 @@ public class LoginService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public ResponseMessage login(String username, String passwordIngresada) {
+    public LoginResponse login(String username, String passwordIngresada) {
         Registro usuario = loginRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
@@ -31,6 +31,15 @@ public class LoginService {
             throw new RuntimeException("Usuario inactivo. Por favor, contacte con el administrador.");
         }
 
-        return new ResponseMessage("Autenticado correctamente", HttpStatus.OK.value());
+        // Extraer rol directamente del usuario
+        String rolUsuario = usuario.getRol().getNombre(); // Suponiendo que tu Rol tiene getNombre()
+
+        return new LoginResponse(
+                "Autenticado correctamente",
+                usuario.getUsername(),
+                rolUsuario,
+                usuario.isActivo(),
+                HttpStatus.OK.value()
+        );
     }
 }

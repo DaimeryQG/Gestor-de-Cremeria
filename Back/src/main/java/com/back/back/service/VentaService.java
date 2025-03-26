@@ -23,7 +23,7 @@ public class VentaService {
     }
 
     @Transactional
-    public Venta registrarVenta(List<DetalleVenta> detalles) {
+    public Venta registrarVenta(String usuario, String rol, List<DetalleVenta> detalles) {
         if (detalles == null || detalles.isEmpty()) {
             throw new IllegalArgumentException("La venta debe contener al menos un producto.");
         }
@@ -40,7 +40,8 @@ public class VentaService {
             }
 
             Producto producto = productoRepository.findById(detalle.getProducto().getProductoId())
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + detalle.getProducto().getProductoId()));
+                    .orElseThrow(() -> new RuntimeException(
+                            "Producto no encontrado con ID: " + detalle.getProducto().getProductoId()));
 
             if (producto.getStock() < detalle.getCantidad()) {
                 throw new RuntimeException("Stock insuficiente para el producto: " + producto.getNombre());
@@ -55,8 +56,11 @@ public class VentaService {
             detalle.setVenta(venta);
         }
 
+        venta.setUsuario(usuario);
+        venta.setRol(rol);
         venta.setTotal(totalVenta);
         venta.setDetalles(detalles);
+
         return ventaRepository.save(venta);
     }
 

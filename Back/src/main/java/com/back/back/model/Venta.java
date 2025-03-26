@@ -21,6 +21,12 @@ public class Venta {
     @Column(name = "total", nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
 
+    @Column(name = "usuario")
+    private String usuario;
+
+    @Column(name = "rol")
+    private String rol;
+
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<DetalleVenta> detalles;
@@ -31,35 +37,16 @@ public class Venta {
     }
 
     // Getters y Setters
-    public Long getVentaId() {
-        return ventaId;
-    }
-
-    public void setVentaId(Long ventaId) {
-        this.ventaId = ventaId;
-    }
-
-    public LocalDateTime getFechaVenta() {
-        return fechaVenta;
-    }
-
-    public void setFechaVenta(LocalDateTime fechaVenta) {
-        this.fechaVenta = fechaVenta;
-    }
-
-    public BigDecimal getTotal() {
-        return total;
-    }
-
-    public void setTotal(BigDecimal total) {
-        this.total = total;
-    }
-
-    public List<DetalleVenta> getDetalles() {
-        return detalles;
-    }
-
-    public void setDetalles(List<DetalleVenta> detalles) {
-        this.detalles = detalles;
-    }
+    public Long getVentaId() { return ventaId; }
+    public void setVentaId(Long ventaId) { this.ventaId = ventaId; }
+    public LocalDateTime getFechaVenta() { return fechaVenta; }
+    public void setFechaVenta(LocalDateTime fechaVenta) { this.fechaVenta = fechaVenta; }
+    public BigDecimal getTotal() { return total; }
+    public void setTotal(BigDecimal total) { this.total = total; }
+    public List<DetalleVenta> getDetalles() { return detalles; }
+    public void setDetalles(List<DetalleVenta> detalles) { this.detalles = detalles; }
+    public String getUsuario() { return usuario; }
+    public void setUsuario(String usuario) { this.usuario = usuario; }
+    public String getRol() { return rol; }
+    public void setRol(String rol) { this.rol = rol; }
 }
