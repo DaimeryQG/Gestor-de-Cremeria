@@ -2,19 +2,21 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '@/views/HomeView.vue';
 import LoginView from '@/views/LoginView.vue';
 import DashboardView from '@/views/DashboardView.vue';
-import UsersView from '../views/UsersView.vue';
+import RegistroView from '../views/RegistroView.vue';
 import VentasView from '../views/VentasView.vue';
 import ProductosView from '../views/ProductosView.vue';
 import ProveedorView from '../views/ProveedorView.vue';
+import ReporteView from '../views/ReporteView.vue';
 
 const routes = [
   { path: '/login', component: LoginView },
   { path: '/', component: HomeView, meta: { requiresAuth: true } },
   { path: '/dashboard', component: DashboardView, meta: { requiresAuth: true } },
-  { path: '/usuarios', component: UsersView, meta: { requiresAuth: true } },
+  { path: '/usuarios', component: RegistroView, meta: { requiresAuth: true } },
   { path: '/ventas', component: VentasView, meta: { requiresAuth: true } },
   { path: '/productos', component: ProductosView, meta: { requiresAuth: true } },
-  { path: '/proveedores', component: ProveedorView, meta: { requiresAuth: true } }
+  { path: '/proveedores', component: ProveedorView, meta: { requiresAuth: true } },
+  { path: '/reportes', component: ReporteView, meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({

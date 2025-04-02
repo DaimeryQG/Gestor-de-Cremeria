@@ -1,5 +1,4 @@
 import { 
-  buscarRegistros, 
   crearRegistro, 
   actualizarRegistro, 
   eliminarRegistro, 
@@ -15,15 +14,16 @@ export default {
   data() {
     return {
       searchOption: 'nombre',
-      searchTerm: '',
+      searchTerms: [{ option: 'nombre', terms: [''] }],
       userList: [],
       showUserPanel: false,
       selectedUser: {},
       showDeleteModal: false,
       showCreateModal: false,
-      showEditModal: false, // Modal editar
+      showSearchModal: false,
+      showEditModal: false,
       passwordInputShown: false,
-      editUserData: {},     // Datos usuario para editar
+      editUserData: {},
       newUser: {
         nombre: '',
         correo: '',
@@ -49,19 +49,45 @@ export default {
   methods: {
     // Buscar
     async searchUser() {
-      if (!this.searchTerm && this.searchOption !== 'activo') {
+      const termIsEmpty = this.searchTerms.some(row => row.terms.every(term => !term || !term.trim())); // Asegúrate de verificar si TODOS los términos están vacíos en lugar de solo uno
+    
+      if (termIsEmpty) {
         alert('Por favor, ingrese un término de búsqueda válido.');
         return;
       }
+    
       try {
-        const valor = (this.searchOption === 'activo') ? this.searchTerm : this.searchTerm.trim();
-        const data = await buscarRegistros(this.searchOption, valor);
+        const filtros = {};
+    
+        // Iterar sobre las filas y añadir los filtros solo si tienen términos no vacíos
+        this.searchTerms.forEach(row => {
+          const validTerms = row.terms.filter(term => term.trim() !== ''); // Filtramos términos vacíos
+    
+          if (validTerms.length > 0) {
+            if (row.option === 'activo') {
+              filtros[row.option] = validTerms[0] === 'Activo' ? ['true'] : ['false']; // Manejamos 'Activo' e 'Inactivo' como 'true' o 'false'
+            } else {
+              filtros[row.option] = validTerms;
+            }
+          } else if (row.option === 'activo') {
+            filtros[row.option] = ['true']; // Si no se selecciona nada, predeterminado es 'Activo'
+          }
+        });
+    
+        const data = await buscarDinamico(filtros); // Llamar a la función que realiza la solicitud POST al backend
         this.userList = data;
+    
+        // Limpiar los términos de búsqueda
+        this.resetSearchFields();
+    
+        // Cerrar el modal de búsqueda
+        this.showSearchModal = false;
+    
       } catch (error) {
         alert(error.message || 'Error al buscar.');
       }
     },
-
+    
     // Cargar todos los usuarios
     async cargarUsuarios() {
       try {
@@ -72,23 +98,55 @@ export default {
       }
     },
 
-    // Nueva función para generar PDF con el filtro
+    resetSearchFields() {
+      this.searchTerms = [{ option: 'nombre', terms: [''] }]; // Resetear a un solo campo de término vacío
+      this.searchOption = 'nombre';  // Restablecer la opción predeterminada
+    },
+
     async generarPDFUsuarios() {
-      if (!this.searchTerm && this.searchOption !== 'activo') {
-        alert('Primero realiza una búsqueda válida para generar PDF.');
+      // Verificar que haya usuarios filtrados en la lista
+      if (this.userList.length === 0) {
+        alert('No se han encontrado usuarios con los filtros seleccionados.');
         return;
       }
+    
       try {
-        const valor = (this.searchOption === 'activo') ? this.searchTerm : this.searchTerm.trim();
-        const usuarios = await buscarRegistros(this.searchOption, valor);
-
+        // Crear el objeto filtros y filtroTexto
+        const filtros = {};
+    
+        // Construcción del filtroTexto
+        const filtroTexto = this.searchTerms
+          .map(row => {
+            // Verificar si hay términos válidos en la fila
+            const validTerms = row.terms.filter(term => term.trim() !== '');
+            if (validTerms.length > 0) {
+              // Si es la opción "activo", mostrar "Activo" o "Inactivo" según el valor de ["true"] o ["false"]
+              if (row.option === 'activo') {
+                return `${row.option}: ${validTerms[0] === 'true' ? 'Activo' : 'Inactivo'}`;  // Ejemplo: 'activo: Activo'
+              } else {
+                return `${row.option}: ${validTerms.join(', ')}`;
+              }
+            } else {
+              return '';
+            }
+          })
+          .filter(text => text.trim() !== '')  // Filtrar si hay filtros vacíos
+          .join(' | ');  // Unir los filtros por ' | '
+    
+        console.log("Filtro aplicado:", filtroTexto); // Ver en consola para depuración
+    
+        // Generación del PDF con los usuarios filtrados
+        const usuarios = this.userList;
         const usuarioActual = JSON.parse(sessionStorage.getItem('usuario'));
-
-        generarUsuariosPDF(usuarios, usuarioActual, this.searchOption, valor);
+    
+        // Llamar a la función para generar el PDF con los resultados de la búsqueda
+        generarUsuariosPDF(usuarios, usuarioActual, filtroTexto, filtros);
+    
       } catch (error) {
         alert('Error al generar el PDF: ' + error.message);
       }
     },
+    
 
     // Abrir panel de detalles
     openUserPanel(user) {
@@ -97,13 +155,13 @@ export default {
       else if (user.rolNombre === "VENDEDOR") rolId = 2;
       else if (user.rolNombre === "PROVEEDOR") rolId = 3;
       else if (user.rolNombre === "ALMACENISTA") rolId = 4;
-    
+
       this.editUserData = {
         ...user,
         rol: { id: rolId },
         password: '' // ⚠️ Opcional: dejar contraseña vacía (para seguridad)
       };
-    
+
       this.showEditModal = true;
     },
 
@@ -119,6 +177,51 @@ export default {
     closeCreateModal() {
       this.showCreateModal = false;
       this.resetNewUser();
+    },
+
+    // Mostrar el modal
+    openSearchModal() {
+      this.showSearchModal = true;
+    },
+
+    // Cerrar el modal
+    closeSearchModal() {
+      this.showSearchModal = false;
+      this.resetSearchFields();
+    },
+
+    addRow() {
+      // Agregar una fila con opción predeterminada y términos vacíos
+      this.searchTerms.push({ option: 'nombre', terms: [''] });
+      this.adjustModalHeight();
+    },
+
+    addTerm(rowIndex) {
+      // Verificamos si la fila existe y si la propiedad 'terms' está definida correctamente como un array
+      if (this.searchTerms[rowIndex] && Array.isArray(this.searchTerms[rowIndex].terms)) {
+        // Añadir un nuevo término vacío a la fila especificada
+        this.searchTerms[rowIndex].terms.push('');
+      } else {
+        alert('La fila no existe o no tiene términos.');
+      }
+
+      this.adjustModalHeight();
+    },
+
+    adjustModalHeight() {
+      const modalDialog = document.querySelector('.modal-dialog-search');
+      const modalContent = document.querySelector('.modal-content');
+
+      // Ajustar la altura del modal según el contenido
+      modalDialog.style.height = 'auto'; // Asegurarse de que el modal pueda expandirse
+      modalContent.style.height = 'auto'; // Ajustar el contenido del modal también
+
+      // Reajustar el tamaño de la ventana del modal
+      const newHeight = modalDialog.scrollHeight;
+      modalDialog.style.height = `${newHeight}px`; // Establecer nueva altura dinámica
+
+      // Agregar una transición suave
+      modalDialog.style.transition = 'height 0.3s ease-in-out';
     },
 
     // Crear Usuario
@@ -162,7 +265,7 @@ export default {
       else if (user.rolNombre === "VENDEDOR") rolId = 2;
       else if (user.rolNombre === "PROVEEDOR") rolId = 3;
       else if (user.rolNombre === "ALMACENISTA") rolId = 4;
-    
+
       this.editUserData = { 
         ...user,
         rol: { id: rolId }
@@ -213,10 +316,10 @@ export default {
       try {
         await activarRegistro(userId);
         alert('Usuario activado correctamente.');
-    
+
         // ⚠️ Actualizamos manualmente el estado del usuario en el modal:
         this.editUserData.activo = true;
-    
+
         await this.cargarUsuarios(); // Opcional, si quieres refrescar la lista
       } catch (error) {
         alert(error.message || 'Error al activar usuario.');
@@ -227,10 +330,10 @@ export default {
       try {
         await desactivarRegistro(userId);
         alert('Usuario desactivado correctamente.');
-    
+
         // ⚠️ Actualizamos manualmente el estado del usuario en el modal:
         this.editUserData.activo = false;
-    
+
         await this.cargarUsuarios(); // Opcional también
       } catch (error) {
         alert(error.message || 'Error al desactivar usuario.');

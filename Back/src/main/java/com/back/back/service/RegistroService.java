@@ -1,15 +1,12 @@
 package com.back.back.service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.back.back.exception.BadRequestException;
 import com.back.back.exception.ConflictException;
 import com.back.back.exception.ResourceNotFoundException;
 import com.back.back.model.Registro;
@@ -123,41 +120,6 @@ public class RegistroService {
         Registro registro = obtenerPorId(id);
         registro.setActivo(true);
         registroRepository.save(registro);
-    }
-
-    public List<Registro> buscarPorUnCampo(Map<String, String> filtros) {
-        if (!filtros.containsKey("campo") || !filtros.containsKey("valor")) {
-            throw new BadRequestException("Debe proporcionar los parámetros 'campo' y 'valor'.");
-        }
-
-        String campo = filtros.get("campo");
-        String valor = filtros.get("valor");
-
-        if (!esCampoValido(campo)) {
-            throw new BadRequestException("Campo de búsqueda '" + campo + "' no es válido.");
-        }
-
-        Specification<Registro> spec;
-        if ("activo".equalsIgnoreCase(campo)) {
-            boolean valorBooleano = Boolean.parseBoolean(valor);
-            spec = (root, query, cb) -> cb.equal(root.get(campo), valorBooleano);
-        } else {
-            spec = (root, query, cb) -> cb.like(cb.lower(root.get(campo)), "%" + valor.toLowerCase() + "%");
-        }
-
-        List<Registro> resultados = registroRepository.findAll(spec);
-        if (resultados.isEmpty()) {
-            throw new ResourceNotFoundException("No se encontraron registros con " + campo + " = '" + valor + "'.");
-        }
-
-        return resultados;
-    }
-
-    private boolean esCampoValido(String campo) {
-        List<String> camposValidos = Arrays.asList(
-                "nombre", "correo", "telefono", "direccion", "rfc", "curp", "pais",
-                "estado", "fechaRegistro", "username", "activo");
-        return camposValidos.contains(campo);
     }
 
     public List<Registro> buscarPorFiltros(Map<String, List<String>> filtros) {

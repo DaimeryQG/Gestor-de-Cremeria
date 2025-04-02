@@ -1,21 +1,5 @@
 const API_URL = 'http://localhost:8081';
 
-export async function buscarRegistros(campo, valor) {
-  const bodyData = {
-    campo: campo,
-    valor: valor
-  };
-  
-  const response = await fetch(`${API_URL}/registros/buscar`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(bodyData)
-  });
-
-  if (!response.ok) throw new Error('Error en la búsqueda.');
-  return await response.json();
-}
-
 export async function crearRegistro(registro) {
   const response = await fetch(`${API_URL}/registros/registrar`, {
     method: 'POST',
@@ -26,7 +10,7 @@ export async function crearRegistro(registro) {
     const errorText = await response.text();
     throw new Error(errorText || 'Error al crear registro.');
   }
-  return { mensaje: 'Registro creado correctamente.' }; // No hay body en backend, devolvemos manualmente
+  return { mensaje: 'Registro creado correctamente.' };
 }
 
 export async function actualizarRegistro(id, updatedData) {
@@ -39,7 +23,7 @@ export async function actualizarRegistro(id, updatedData) {
     const errorText = await response.text();
     throw new Error(errorText || 'Error al actualizar.');
   }
-  return { mensaje: 'Registro actualizado correctamente.' }; // No hay body en backend
+  return { mensaje: 'Registro actualizado correctamente.' };
 }
 
 export async function eliminarRegistro(id) {
@@ -51,7 +35,7 @@ export async function eliminarRegistro(id) {
     const errorText = await response.text();
     throw new Error(errorText || 'Error al eliminar.');
   }
-  return { mensaje: 'Registro eliminado correctamente.' }; // No hay body
+  return { mensaje: 'Registro eliminado correctamente.' };
 }
 
 export async function activarRegistro(id) {

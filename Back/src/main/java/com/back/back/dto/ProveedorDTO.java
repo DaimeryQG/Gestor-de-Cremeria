@@ -1,27 +1,23 @@
-package com.back.back.model;
+package com.back.back.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+public class ProveedorDTO {
 
-@Entity
-@Table(name = "proveedores")
-public class Proveedor {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "proveedor_id")
-    private Long proveedorId; // Cambiar a Long en lugar de int
-
+    private Long proveedorId;
     private String nombre;
     private String telefono;
     private String correo;
     private String direccion;
+    private boolean activo;
 
-    private boolean activo = true;
+    // Constructor
+    public ProveedorDTO(Long proveedorId, String nombre, String telefono, String correo, String direccion, boolean activo) {
+        this.proveedorId = proveedorId;
+        this.nombre = nombre;
+        this.telefono = telefono;
+        this.correo = correo;
+        this.direccion = direccion;
+        this.activo = activo;
+    }
 
     // Getters y Setters
     public Long getProveedorId() {
@@ -64,7 +60,7 @@ public class Proveedor {
         this.direccion = direccion;
     }
 
-    public boolean isActivo() {
+    public boolean getActivo() {
         return activo;
     }
 

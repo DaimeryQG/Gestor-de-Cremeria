@@ -110,4 +110,14 @@ public class ProveedorService {
         }
         return valor;
     }
+
+    public List<Proveedor> buscarPorFiltros(Map<String, List<String>> filtros) {
+        List<String> nombres = filtros.get("nombre");
+        List<String> correos = filtros.get("correo");
+        List<String> telefonos = filtros.get("telefono");
+        List<String> direcciones = filtros.get("direccion");
+        Boolean activo = filtros.containsKey("activo") ? Boolean.parseBoolean(filtros.get("activo").get(0)) : null;
+
+        return proveedorRepository.buscarPorFiltros(nombres, correos, telefonos, direcciones, activo);
+    }
 }

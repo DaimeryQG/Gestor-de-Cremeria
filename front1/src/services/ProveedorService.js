@@ -120,3 +120,21 @@ export async function desactivarProveedor(id) {
     throw error;
   }
 }
+
+export async function buscarProveedorDinamico(filtros) {
+  try {
+    const response = await fetch(`${API_URL}/buscar/dinamico`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(filtros),
+    });
+
+    if (!response.ok) throw new Error('Error al buscar proveedores dinámicamente');
+
+    const proveedores = await response.json();
+    return proveedores;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
+}

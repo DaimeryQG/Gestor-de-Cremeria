@@ -1,42 +1,66 @@
 <template>
   <div class="container-fluid">
-    <!-- Formulario de Búsqueda -->
+    <!-- Botones Principales -->
     <div class="card p-3 mb-4 search-card text-center">
-      <form @submit.prevent="searchUser" class="d-flex align-items-center justify-content-center flex-wrap gap-3">
-
-        <div class="search-group d-flex align-items-center">
-          <label for="searchOption" class="text-white mr-2 mb-0">Buscar por:</label>
-          <select v-model="searchOption" id="searchOption" class="form-control custom-input">
-            <option value="nombre">Nombre</option>
-            <option value="rfc">RFC</option>
-            <option value="curp">CURP</option>
-            <option value="correo">Correo</option>
-            <option value="telefono">Teléfono</option>
-            <option value="pais">País</option>
-            <option value=" ">Estado</option>
-            <option value="username">Username</option>
-            <option value="activo">Activo</option>
-          </select>
-        </div>
-
-        <div class="search-group d-flex align-items-center">
-          <label for="searchTerm" class="text-white mr-2 mb-0">Término:</label>
-          <input v-if="searchOption !== 'activo'" v-model="searchTerm" type="text" class="form-control custom-input"
-            placeholder="Ingrese el valor">
-          <select v-else v-model="searchTerm" class="form-control custom-input">
-            <option value="true">Activo</option>
-            <option value="false">Inactivo</option>
-          </select>
-        </div>
-
-        <div class="button-group d-flex gap-2">
-          <button type="submit" class="btn btn-sidebar">Buscar</button>
-          <button type="button" class="btn btn-sidebar" @click="showCreateModal = true">Crear Usuario</button>
-          <button type="button" class="btn btn-sidebar" @click="generarPDFUsuarios">Generar PDF</button>
-        </div>
-
-      </form>
+      <div class="button-group d-flex gap-2">
+        <button type="submit" class="btn btn-sidebar" @click="showSearchModal = true">Buscar</button>
+        <button type="button" class="btn btn-sidebar" @click="showCreateModal = true">Crear Usuario</button>
+        <button type="button" class="btn btn-sidebar" @click="generarPDFUsuarios">Generar PDF</button>
+      </div>
     </div>
+
+<!-- Modal de Búsqueda -->
+<div v-if="showSearchModal" class="modal fade show d-block" @click.self="closeSearchModal">
+  <div class="modal-dialog-search" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-white rounded-top">
+        <h5 class="modal-title">Buscar Usuario</h5>
+        <button type="button" class="btn-x-custom" @click="closeSearchModal">&#10005;</button>
+      </div>
+      <div class="modal-body-search-search p-4 bg-light">
+        <form @submit.prevent="searchUser">
+          <!-- Filtro de búsqueda -->
+          <div v-for="(row, rowIndex) in searchTerms" :key="rowIndex" class="form-group">
+            <label for="searchOption" class="modal-label">Buscar por:</label>
+            <select v-model="row.option" class="form-control custom-input">
+              <option value="nombre">Nombre</option>
+              <option value="rfc">RFC</option>
+              <option value="curp">CURP</option>
+              <option value="correo">Correo</option>
+              <option value="telefono">Teléfono</option>
+              <option value="pais">País</option>
+              <option value="estado">Estado</option>
+              <option value="username">Username</option>
+              <option value="activo">Activo</option> <!-- Aquí se añade "Activo" -->
+            </select>
+
+            <label for="searchTerm" class="modal-label">Término:</label>
+            <div v-for="(term, termIndex) in row.terms" :key="termIndex" class="d-flex align-items-center">
+              <!-- Si la opción seleccionada es "activo", poner opciones predefinidas -->
+              <input v-if="row.option !== 'activo'" v-model="row.terms[termIndex]" type="text" class="form-control custom-input" placeholder="Ingrese el valor">
+              <select v-if="row.option === 'activo'" v-model="row.terms[termIndex]" class="form-control custom-input">
+                <option value="Activo" selected>Activo</option> <!-- Valor predeterminado -->
+                <option value="Inactivo">Inactivo</option>
+              </select>
+            </div>
+
+            <!-- Botón para agregar más términos -->
+            <button type="button" class="add-term-btn" @click="addTerm(rowIndex)">+</button>
+          </div>
+
+          <!-- Botón para agregar más filas -->
+          <button type="button" class="btn btn-warning" @click="addRow">Añadir Fila</button>
+
+          <!-- Botones dentro del modal -->
+          <div class="modal-footer bg-light border-0">
+            <button type="submit" class="btn btn-sidebar">Buscar</button>
+            <button type="button" class="btn btn-secondary shadow-sm" @click="closeSearchModal">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- Lista de Usuarios -->
     <div class="row">
@@ -268,9 +292,9 @@
 </template>
 
 <script>
-import UsersM from '@/js/Users.js';
+import LogicRegistro from '@/js/Registro.js';
 
-export default UsersM;
+export default LogicRegistro;
 </script>
 
 <style scoped>
@@ -419,8 +443,23 @@ export default UsersM;
   display: flex;
   align-items: center;
   min-height: 100vh;
-  /* CENTRAR VERTICAL */
 }
+
+.modal.fade.show {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1050;
+  background: rgba(0, 0, 0, 0.6);
+  /* Fondo semitransparente */
+}
+
+
 
 @keyframes fadeInUp {
   from {
@@ -437,9 +476,10 @@ export default UsersM;
 .modal-content {
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  max-height: none;
+  /* Permitir el crecimiento según el contenido */
+  height: auto;
   overflow: visible;
-  max-height: 90vh;
-  /* Limita altura para no generar scroll */
 }
 
 .modal-header {
@@ -565,5 +605,104 @@ body.modal-open {
 
 body {
   zoom: 67%;
+}
+
+
+/* Estilo general para el formulario de búsqueda */
+.modal-body-search form {
+  display: flex;
+  flex-direction: column;
+  /* Los elementos se alinean en una columna */
+  gap: 20px;
+  /* Espacio entre los elementos */
+}
+
+.modal-body-search .d-flex {
+  display: flex;
+  gap: 20px;
+  /* Espacio entre los inputs dentro del contenedor */
+}
+
+/* Contenedor de los campos "Buscar por" y "Término" en una sola fila */
+.modal-body-search .form-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+/* Ajustes para las etiquetas (labels) más pequeñas */
+.modal-body-search .modal-label {
+  font-size: 12px;
+  /* Hacemos el tamaño de la fuente más pequeño */
+  font-weight: bold;
+  margin-bottom: 0;
+  /* No hay espacio extra debajo de las etiquetas */
+  width: 90px;
+  /* Ajustamos el tamaño de las etiquetas para que estén alineadas */
+}
+
+/* Ajuste de los inputs/selects (hacerlos más pequeños) */
+.modal-body-search .custom-input {
+  min-width: 150px;
+  /* Establecer un ancho mínimo para los inputs */
+  max-width: 200px;
+  /* Establecer un ancho máximo */
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* Botón de agregar más términos */
+.modal-body-search-search .add-term-btn {
+  background-color: #f39c12;
+  border: none;
+  padding: 8px;
+  color: white;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.modal-body-search-search .add-term-btn:hover {
+  background-color: #e67e22;
+}
+
+/* Botones dentro del modal */
+.modal-body-search .modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  /* Espacio entre los botones */
+  margin-top: 15px;
+}
+
+.modal-body-search button {
+  padding: 8px 20px;
+  font-size: 14px;
+}
+
+/* Ajustar el modal y centrarlo solo para este modal de búsqueda */
+.modal-dialog-search {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  /* Cambiar para que el modal se ajuste al contenido */
+  padding: 0;
+  width: 100%;
+  max-width: 600px;
+  /* Tamaño inicial del modal */
+  height: auto;
+  /* El modal se ajustará a la altura del contenido */
+  margin: 0 auto;
+  transition: max-width 0.3s ease-in-out, height 0.3s ease-in-out;
+  /* Transiciones para ajustar el tamaño */
+}
+
+.modal-body-search {
+  max-height: none;
+  height: auto;
+  padding-top: 0.5rem;
 }
 </style>

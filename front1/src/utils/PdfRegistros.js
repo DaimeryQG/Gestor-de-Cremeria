@@ -2,22 +2,22 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import Logo from '@/assets/images/LogoTatis.png';
 
-export function generarUsuariosPDF(usuarios, usuarioActual, campo, valor) {
+export function generarUsuariosPDF(usuarios, usuarioActual, filtroTexto, filtros) {
   const pdf = new jsPDF('landscape'); // Cambiar la orientación a horizontal
   let startY = 20;
 
   // --- Agregar Logo ---
   pdf.addImage(Logo, 'PNG', 14, startY, 40, 40);
-    startY += 45; // Espacio después del logo
+  startY += 45; // Espacio después del logo
 
-  // --- Encabezado principal --- Tatis Cremería 2025
+  // --- Encabezado principal ---
   pdf.setFont('helvetica', 'bold');
   pdf.setFontSize(22);
   pdf.setTextColor(40, 40, 40);
   const pageWidth = pdf.internal.pageSize.getWidth();
   pdf.text('Tatis Cremería 2025', pageWidth / 2, startY, { align: 'center' });
   startY += 20;
-  
+
   pdf.setFontSize(16);
   pdf.setTextColor(100, 100, 100);
   pdf.text('Reporte de Usuarios', pageWidth / 2, startY, { align: 'center' });
@@ -30,19 +30,26 @@ export function generarUsuariosPDF(usuarios, usuarioActual, campo, valor) {
   startY += 8;
   pdf.text(`Fecha y Hora: ${new Date().toLocaleString()}`, 14, startY);
   startY += 8;
-  pdf.text(`Filtro aplicado: ${campo} = ${valor}`, 14, startY);
+
+  // --- Filtro aplicado ---
+  if (filtroTexto && filtroTexto.trim() !== '') {
+    pdf.text(`Filtro aplicado: ${filtroTexto}`, 14, startY);  // Aquí imprimimos el filtro de forma legible
+  } else {
+    pdf.text('Filtro aplicado: Ninguno', 14, startY); // Si no hay filtro, mostramos "Ninguno"
+  }
+  
   startY += 10;
 
-  // --- Tabla de usuarios (sin ID, Dirección, País y Estado) ---
-  const columnas = ["Nombre", "Correo", "Teléfono", "RFC", "CURP", "Username", "Rol", "Activo"];
+  // --- Tabla de usuarios ---
+  const columnas = ["Nombre", "Correo", "Teléfono", "Direccion","Pais", "Username", "Rol", "Activo"];
   const filas = usuarios.map(user => [
     user.nombre,
     user.correo,
     user.telefono,
-    user.rfc,
-    user.curp,
+    user.direccion,
+    user.pais,
     user.username,
-    user.rol?.nombre || '',
+    user.rolNombre, // Asegurarnos de que 'rolNombre' esté bien presente en los datos
     user.activo ? 'Activo' : 'Inactivo'
   ]);
 

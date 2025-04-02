@@ -2,51 +2,52 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import Logo from '@/assets/images/LogoTatis.png';
 
-export function generarProveedoresPDF(proveedores, usuarioActual, campo, valor) {
-  const pdf = new jsPDF('p', 'mm', 'a4'); // Ajustar la orientación a vertical ('p' para vertical)
+export function generarProveedoresPDF(proveedores, usuarioActual, filtroTexto, filtros) {
+  const pdf = new jsPDF('landscape'); // Cambiar la orientación a horizontal
   let startY = 20;
 
   // --- Agregar Logo ---
-    pdf.addImage(Logo, 'PNG', 14, startY, 40, 40);
-      startY += 45; // Espacio después del logo
+  pdf.addImage(Logo, 'PNG', 14, startY, 40, 40);
+  startY += 45; // Espacio después del logo
 
-  // 🔷 Encabezado principal
+  // --- Encabezado principal ---
   pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(20);
+  pdf.setFontSize(22);
+  pdf.setTextColor(40, 40, 40);
   const pageWidth = pdf.internal.pageSize.getWidth();
-  pdf.text('Tatis Cremería 2025', pageWidth / 2, startY, { align: 'center' }); // Centrado horizontal
-  startY += 10;
+  pdf.text('Tatis Cremería 2025', pageWidth / 2, startY, { align: 'center' });
+  startY += 20;
+
   pdf.setFontSize(16);
   pdf.setTextColor(100, 100, 100);
   pdf.text('Reporte de Proveedores', pageWidth / 2, startY, { align: 'center' });
-  startY += 10;
-  
-  pdf.setFontSize(10);
-  pdf.text(`Generado por: ${usuarioActual?.username || 'Anónimo'}`, 14, startY);
-  startY += 6;
+  startY += 20;
+
+  // --- Datos Generales ---
+  pdf.setFontSize(12);
+  pdf.setTextColor(50, 50, 50);
+  pdf.text(`Generado por: ${usuarioActual?.username || "Anónimo"} | Rol: ${usuarioActual?.rol || "Desconocido"}`, 14, startY);
+  startY += 8;
   pdf.text(`Fecha y Hora: ${new Date().toLocaleString()}`, 14, startY);
-  startY += 6;
-  pdf.text(`Filtro aplicado: ${campo} = ${valor}`, 14, startY);
+  startY += 8;
+
+  // --- Filtro aplicado ---
+  if (filtroTexto && filtroTexto.trim() !== '') {
+    pdf.text(`Filtro aplicado: ${filtroTexto}`, 14, startY);  // Aquí imprimimos el filtro de forma legible
+  } else {
+    pdf.text('Filtro aplicado: Ninguno', 14, startY); // Si no hay filtro, mostramos "Ninguno"
+  }
+
   startY += 10;
 
-  // 🔷 Tabla de proveedores
-  const columnas = [
-    "ID", 
-    "Nombre", 
-    "Correo", 
-    "Teléfono", 
-    "Dirección", 
-    "Estado", 
-    "Activo"
-  ];
-
+  // --- Tabla de proveedores ---
+  const columnas = ["ID", "Nombre", "Correo", "Teléfono", "Dirección", "Activo"];
   const filas = proveedores.map(proveedor => [
     proveedor.proveedorId,
     proveedor.nombre,
     proveedor.correo,
     proveedor.telefono,
     proveedor.direccion,
-    proveedor.estado === 1 ? 'Activo' : 'Inactivo',  // Mapeamos el estado (1=Activo, 0=Inactivo)
     proveedor.activo ? 'Activo' : 'Inactivo'
   ]);
 
@@ -61,7 +62,7 @@ export function generarProveedoresPDF(proveedores, usuarioActual, campo, valor) 
 
   startY = pdf.lastAutoTable.finalY + 10; // Actualiza la posición después de la tabla
 
-  // 🔷 Resumen de la información
+  // --- Resumen de la información ---
   const totalProveedores = proveedores.length;
   const totalActivos = proveedores.filter(proveedor => proveedor.activo).length;
   const totalInactivos = totalProveedores - totalActivos;
@@ -74,7 +75,7 @@ export function generarProveedoresPDF(proveedores, usuarioActual, campo, valor) 
   startY += 8;
   pdf.text(`Total Inactivos: ${totalInactivos}`, 14, startY);
 
-  // 🔷 Footer / Paginación
+  // --- Footer / Paginación ---
   const pageCount = pdf.internal.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     pdf.setPage(i);

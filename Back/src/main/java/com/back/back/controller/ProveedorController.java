@@ -1,5 +1,7 @@
 package com.back.back.controller;
 
+import com.back.back.dto.ProveedorDTO;
+import com.back.back.mapper.ProveedorMapper;
 import com.back.back.model.Proveedor;
 import com.back.back.service.ProveedorService;
 
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = { "http://127.0.0.1:8080", "http://localhost:8080" })
@@ -58,5 +61,17 @@ public class ProveedorController {
     @PostMapping("/buscar")
     public ResponseEntity<?> buscarPorUnCampo(@RequestBody Map<String, String> filtros) {
         return ResponseEntity.ok(proveedorService.buscarPorUnCampo(filtros));
+    }
+
+    @PostMapping("/buscar/dinamico")
+    public ResponseEntity<List<ProveedorDTO>> buscarPorFiltros(@RequestBody Map<String, List<String>> filtros) {
+        List<Proveedor> proveedores = proveedorService.buscarPorFiltros(filtros);  // Llamada al servicio
+
+        // Mapear proveedores a ProveedorDTO
+        List<ProveedorDTO> proveedorDTOs = proveedores.stream()
+            .map(ProveedorMapper::toDTO)  // Mapeo usando el ProveedorMapper
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(proveedorDTOs);
     }
 }

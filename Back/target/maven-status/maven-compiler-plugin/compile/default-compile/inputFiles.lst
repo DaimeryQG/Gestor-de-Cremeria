@@ -8,12 +8,14 @@ C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\m
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\controller\RegistroController.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\controller\ReporteController.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\controller\VentaController.java
+C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\dto\ProveedorDTO.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\dto\RegistroDTO.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\exception\BadRequestException.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\exception\ConflictException.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\exception\CSVFormatException.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\exception\GlobalExceptionHandler.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\exception\ResourceNotFoundException.java
+C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\mapper\ProveedorMapper.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\mapper\RegistroMapper.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\model\Categoria.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\model\DetalleVenta.java
