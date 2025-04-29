@@ -8,41 +8,45 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "productos")
+@Table(name = "tdProducto")
 public class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "producto_id")
+    @Column(name = "iIdProducto")
     private Long productoId;
 
     @NotNull
     @Size(min = 3, max = 100)
+    @Column(name = "cNombre")
     private String nombre;
 
     @Size(max = 255)
+    @Column(name = "cDescripcion")
     private String descripcion;
 
     @NotNull
+    @Column(name = "fPrecio")
     private BigDecimal precio;
 
+    @Column(name = "iStock")
     private int stock;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "categoria_id", nullable = false)
+    @JoinColumn(name = "iIdCategoria", nullable = false)
     private Categoria categoria;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "proveedor_id", nullable = false)
+    @JoinColumn(name = "iIdProveedor", nullable = false)
     private Proveedor proveedor;
 
-    @Column(name = "fecha_registro", nullable = false, updatable = false)
+    @Column(name = "dtFechaRegistro", nullable = false, updatable = false)
     private LocalDateTime fechaRegistro;
 
-    @Column(name = "fecha_caducidad", nullable = false)
+    @Column(name = "dtFechaCaducidad", nullable = false)
     private LocalDate fechaCaducidad;
 
-    @Column(name = "activo", nullable = false)
+    @Column(name = "bActivo", nullable = false)
     private boolean activo;
 
     @PrePersist

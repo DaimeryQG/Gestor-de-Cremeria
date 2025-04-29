@@ -5,30 +5,30 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "detalle_venta")
+@Table(name = "trDetalleVenta")
 public class DetalleVenta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "detalle_id")
+    @Column(name = "iIdDetalle")
     private Long detalleId;
 
     @ManyToOne
-    @JoinColumn(name = "venta_id", nullable = false)
+    @JoinColumn(name = "iIdVenta", nullable = false)
     @JsonBackReference
     private Venta venta;
 
     @ManyToOne
-    @JoinColumn(name = "producto_id", nullable = false)
+    @JoinColumn(name = "iIdProducto", nullable = false)
     private Producto producto;
 
-    @Column(name = "cantidad", nullable = false)
+    @Column(name = "iCantidad", nullable = false)
     private int cantidad;
 
-    @Column(name = "precio_unitario", nullable = false, precision = 10, scale = 2)
+    @Column(name = "fPrecioUnitario", nullable = false, precision = 10, scale = 2)
     private BigDecimal precioUnitario;
 
-    @Column(name = "subtotal", nullable = false, precision = 10, scale = 2)
+    @Column(name = "fSubtotal", nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;
 
     // Getters y Setters

@@ -7,22 +7,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "ventas")
+@Table(name = "tdVenta")
 public class Venta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "venta_id")
+    @Column(name = "iIdVenta")
     private Long ventaId;
 
-    @Column(name = "fecha_venta", nullable = false, updatable = false)
+    @Column(name = "dtFechaVenta", nullable = false, updatable = false)
     private LocalDateTime fechaVenta;
 
-    @Column(name = "total", nullable = false, precision = 10, scale = 2)
+    @Column(name = "fTotal", nullable = false, precision = 10, scale = 2)
     private BigDecimal total;
 
-    @Column(name = "usuario")
-    private String usuario;
+    @Column(name = "iIdUsuario")
+    private Integer usuario;
 
     @Column(name = "rol")
     private String rol;
@@ -45,8 +45,8 @@ public class Venta {
     public void setTotal(BigDecimal total) { this.total = total; }
     public List<DetalleVenta> getDetalles() { return detalles; }
     public void setDetalles(List<DetalleVenta> detalles) { this.detalles = detalles; }
-    public String getUsuario() { return usuario; }
-    public void setUsuario(String usuario) { this.usuario = usuario; }
+    public Integer getUsuario() { return usuario; }
+    public void setUsuario(Integer usuario) { this.usuario = usuario; }
     public String getRol() { return rol; }
     public void setRol(String rol) { this.rol = rol; }
 }

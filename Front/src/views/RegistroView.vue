@@ -69,6 +69,7 @@
           <div class="card-body">
             <h5 class="card-title">{{ user.nombre }}</h5>
             <p class="card-text">{{ user.correo }}</p>
+            <p class="card-text">{{ user.rolNombre }}</p>
           </div>
         </div>
       </div>

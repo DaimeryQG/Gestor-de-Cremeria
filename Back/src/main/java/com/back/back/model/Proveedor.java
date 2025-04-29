@@ -8,19 +8,27 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "proveedores")
+@Table(name = "tdProveedor")
 public class Proveedor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "proveedor_id")
+    @Column(name = "iIdProveedor")
     private Long proveedorId; // Cambiar a Long en lugar de int
 
+    @Column(name = "cNombre")
     private String nombre;
+
+    @Column(name = "cTelefono")
     private String telefono;
+
+    @Column(name = "cCorreo")
     private String correo;
+
+    @Column(name = "cDireccion")
     private String direccion;
 
+    @Column(name = "bActivo")
     private boolean activo = true;
 
     // Getters y Setters

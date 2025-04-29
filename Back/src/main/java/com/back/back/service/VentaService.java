@@ -56,7 +56,7 @@ public class VentaService {
             detalle.setVenta(venta);
         }
 
-        venta.setUsuario(usuario);
+        venta.setUsuario(Integer.parseInt(usuario));
         venta.setRol(rol);
         venta.setTotal(totalVenta);
         venta.setDetalles(detalles);

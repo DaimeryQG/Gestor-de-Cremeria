@@ -5,32 +5,53 @@ import java.util.Date;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "registro")
+@Table(name = "tdUsuario")
 public class Registro {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "iIdUsuario")
+    private Integer id;
 
+    @Column(name = "cNombre")
     private String nombre;
+
+    @Column(name = "cCorreo")
     private String correo;
+
+    @Column(name = "cTelefono")
     private String telefono;
+
+    @Column(name = "cDireccion")
     private String direccion;
+
+    @Column(name = "cRFC")
     private String rfc;
+
+    @Column(name = "cCURP")
     private String curp;
+
+    @Column(name = "cPais")
     private String pais;
+
+    @Column(name = "cEstado")
     private String estado;
 
     @Temporal(TemporalType.DATE)
+    @Column(name = "dtFechaRegistro")
     private Date fechaRegistro;
     
+    @Column(name = "cNombreUsuario")
     private String username;
+
+    @Column(name = "cContrasena")
     private String password;
 
     @ManyToOne
-    @JoinColumn(name = "id_rol", nullable = false)
+    @JoinColumn(name = "iIdRol", nullable = false)
     private Rol rol;
 
+    @Column(name = "bActivo")
     private boolean activo = true;
 
     // Constructores
@@ -50,11 +71,11 @@ public class Registro {
     }
 
     // Getters y Setters
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

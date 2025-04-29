@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class RegistroDTO {
 
-    private Long id;
+    private Integer id;
     private String nombre;
     private String correo;
     private String telefono;
@@ -19,7 +19,7 @@ public class RegistroDTO {
     private Boolean activo;
 
     // Constructor
-    public RegistroDTO(Long id,String nombre, String correo, String telefono, String direccion, String rfc, String curp, String pais, String estado, Date fechaRegistro, String username, String rolNombre, boolean activo) {
+    public RegistroDTO(Integer id,String nombre, String correo, String telefono, String direccion, String rfc, String curp, String pais, String estado, Date fechaRegistro, String username, String rolNombre, boolean activo) {
         this.id = id;
         this.nombre = nombre;
         this.correo = correo;
@@ -37,11 +37,11 @@ public class RegistroDTO {
 
     // Getters y Setters
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

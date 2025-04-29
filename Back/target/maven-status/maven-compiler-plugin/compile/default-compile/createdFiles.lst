@@ -1,5 +1,6 @@
 com\back\back\config\WebConfig.class
 com\back\back\controller\LoginController.class
+com\back\back\dto\ProveedorDTO.class
 com\back\back\model\Proveedor.class
 com\back\back\exception\CSVFormatException.class
 com\back\back\exception\GlobalExceptionHandler.class
@@ -16,13 +17,16 @@ com\back\back\controller\ReporteController.class
 com\back\back\model\LoginRequest.class
 com\back\back\repository\ProductoRepository.class
 com\back\back\model\ResponseMessage.class
+com\back\back\model\VentaRequest.class
 com\back\back\service\ProveedorService.class
 com\back\back\repository\RolRepository.class
 com\back\back\dto\RegistroDTO.class
+com\back\back\model\LoginResponse.class
 com\back\back\service\ProductoService.class
 com\back\back\utils\CSVHelper.class
 com\back\back\repository\CategoriaRepository.class
 com\back\back\model\Rol.class
+com\back\back\mapper\ProveedorMapper.class
 com\back\back\model\Producto.class
 com\back\back\service\LoginService.class
 com\back\back\exception\ConflictException.class

@@ -3,13 +3,15 @@ package com.back.back.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "tdRole")
 public class Rol {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "iIdRol")
+    private Integer id;
 
+    @Column(name = "cNombreRol")
     private String nombre;
 
     // Constructores
@@ -20,11 +22,11 @@ public class Rol {
     }
 
     // Getters y Setters
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
