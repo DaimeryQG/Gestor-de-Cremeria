@@ -77,9 +77,10 @@ export default function useVentas() {
     }
 
     const usuarioData = JSON.parse(sessionStorage.getItem('usuario'));
+    console.log(sessionStorage.getItem('usuario'));
 
     const ventaRequest = {
-      usuario: usuarioData?.username || "Anónimo",
+      usuario: usuarioData?.username || "ANONIMO",
       rol: usuarioData?.rol || "SIN_ROL",
       detalles: detallesVenta.value.map(det => ({
         producto: { productoId: det.producto.productoId },

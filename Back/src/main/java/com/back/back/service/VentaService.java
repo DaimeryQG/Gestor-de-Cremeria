@@ -2,8 +2,10 @@ package com.back.back.service;
 
 import com.back.back.model.DetalleVenta;
 import com.back.back.model.Producto;
+import com.back.back.model.Registro;
 import com.back.back.model.Venta;
 import com.back.back.repository.ProductoRepository;
+import com.back.back.repository.RegistroRepository;
 import com.back.back.repository.VentaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,14 +18,17 @@ public class VentaService {
 
     private final VentaRepository ventaRepository;
     private final ProductoRepository productoRepository;
+    private final RegistroRepository registroRepository;
 
-    public VentaService(VentaRepository ventaRepository, ProductoRepository productoRepository) {
+    public VentaService(VentaRepository ventaRepository, ProductoRepository productoRepository,
+            RegistroRepository registroRepository) {
         this.ventaRepository = ventaRepository;
         this.productoRepository = productoRepository;
+        this.registroRepository = registroRepository;
     }
 
     @Transactional
-    public Venta registrarVenta(String usuario, String rol, List<DetalleVenta> detalles) {
+    public Venta registrarVenta(String username, String rol, List<DetalleVenta> detalles) {
         if (detalles == null || detalles.isEmpty()) {
             throw new IllegalArgumentException("La venta debe contener al menos un producto.");
         }
@@ -56,7 +61,13 @@ public class VentaService {
             detalle.setVenta(venta);
         }
 
-        venta.setUsuario(Integer.parseInt(usuario));
+        // Buscar al usuario por el username (ya que la propiedad en Venta es Integer)
+        Registro usuario = registroRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con username: " + username));
+
+        Integer usuarioId = usuario.getId();  // Asegúrate de que el ID sea Integer, como se define en Venta
+
+        venta.setUsuario(usuarioId); // Guardamos el ID del usuario
         venta.setRol(rol);
         venta.setTotal(totalVenta);
         venta.setDetalles(detalles);

@@ -34,6 +34,9 @@
         </div>
       </div>
     </transition>
+
+    <Feedback v-if="route.path !== '/login'" />
+
   </div>
 </template>
 
@@ -43,6 +46,7 @@ import { useRoute } from 'vue-router';
 import Navbar from '@/components/views/Navbar.vue';
 import Sidebar from '@/components/views/Sidebar.vue';
 import Footer from '@/components/views/Footer.vue';
+import Feedback from '@/components/views/Feedback.vue'; 
 
 const isMenuOpen = ref(false);
 const showWelcome = ref(false);

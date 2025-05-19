@@ -16,6 +16,8 @@ public interface RegistroRepository extends JpaRepository<Registro, Long>, JpaSp
 
     Optional<Registro> findById(Long id); // Buscar por id
 
+    Optional<Registro> findByUsername(String username);
+
     List<Registro> findByActivoTrue();  // Retorna solo registros activos
 
      @Query("SELECT r FROM Registro r WHERE "

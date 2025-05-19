@@ -2,6 +2,7 @@ C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\m
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\config\SecurityConfig.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\config\WebConfig.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\controller\CategoriaController.java
+C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\controller\FeedbackController.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\controller\LoginController.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\controller\ProductoController.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\controller\ProveedorController.java
@@ -19,6 +20,7 @@ C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\m
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\mapper\RegistroMapper.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\model\Categoria.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\model\DetalleVenta.java
+C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\model\Feedback.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\model\LoginRequest.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\model\LoginResponse.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\model\Producto.java
@@ -29,6 +31,7 @@ C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\m
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\model\Venta.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\model\VentaRequest.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\repository\CategoriaRepository.java
+C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\repository\FeedbackRepository.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\repository\LoginRepository.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\repository\ProductoRepository.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\repository\ProveedorRepository.java
@@ -36,6 +39,7 @@ C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\m
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\repository\RolRepository.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\repository\VentaRepository.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\service\CategoriaService.java
+C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\service\FeedbackService.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\service\LoginService.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\service\ProductoService.java
 C:\Users\quint\OneDrive\Escritorio\Gestor Cremeria\Gestor-de-Cremeria\Back\src\main\java\com\back\back\service\ProveedorService.java

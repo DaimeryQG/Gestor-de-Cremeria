@@ -96,7 +96,7 @@
           <td>{{ venta.usuario }}</td>
           <td>{{ venta.rol }}</td>
           <td>{{ new Date(venta.fechaVenta).toLocaleString() }}</td>
-          <td>${{ venta.total.toFixed(2) }}</td>
+          <td>${{ venta.total }}</td>
           <td>
             <button class="btn btn-info btn-sm" @click="verDetallesVenta(venta)">Ver</button>
           </td>
