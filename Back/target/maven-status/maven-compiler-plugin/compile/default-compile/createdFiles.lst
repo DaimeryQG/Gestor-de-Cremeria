@@ -9,10 +9,13 @@ com\back\back\controller\ReporteController.class
 com\back\back\repository\ProductoRepository.class
 com\back\back\model\ResponseMessage.class
 com\back\back\model\VentaRequest.class
+com\back\back\model\Feedback.class
 com\back\back\service\ProveedorService.class
 com\back\back\model\LoginResponse.class
 com\back\back\service\ProductoService.class
+com\back\back\controller\HomeController.class
 com\back\back\repository\CategoriaRepository.class
+com\back\back\repository\FeedbackRepository.class
 com\back\back\mapper\ProveedorMapper.class
 com\back\back\service\CategoriaService.class
 com\back\back\repository\ProveedorRepository.class
@@ -21,6 +24,8 @@ com\back\back\model\Categoria.class
 com\back\back\service\VentaService.class
 com\back\back\config\WebConfig.class
 com\back\back\model\Proveedor.class
+com\back\back\service\FeedbackService.class
+com\back\back\controller\FeedbackController.class
 com\back\back\exception\GlobalExceptionHandler.class
 com\back\back\model\Registro.class
 com\back\back\repository\VentaRepository.class

@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = { "http://127.0.0.1:8080", "http://localhost:8080" })
 @RequestMapping("/proveedores")
 public class ProveedorController {
 

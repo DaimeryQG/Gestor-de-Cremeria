@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = { "http://127.0.0.1:8080", "http://localhost:8080" })
 @RequestMapping("/reportes")
 public class ReporteController {
 

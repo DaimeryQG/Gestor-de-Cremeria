@@ -1,12 +1,8 @@
-const API_URL = 'http://localhost:8081/productos';
-
 export async function obtenerTodosProductos() {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch('/productos', {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      headers: { 'Content-Type': 'application/json' }
     });
 
     if (!response.ok) {
@@ -23,11 +19,9 @@ export async function obtenerTodosProductos() {
 
 export async function obtenerProductoPorId(id) {
   try {
-    const response = await fetch(`${API_URL}/${id}`, {
+    const response = await fetch(`/productos/${id}`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      headers: { 'Content-Type': 'application/json' }
     });
 
     if (!response.ok) {
@@ -44,11 +38,9 @@ export async function obtenerProductoPorId(id) {
 
 export async function crearProducto(producto) {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch('/productos', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(producto)
     });
 
@@ -66,11 +58,9 @@ export async function crearProducto(producto) {
 
 export async function actualizarProducto(id, producto) {
   try {
-    const response = await fetch(`${API_URL}/${id}`, {
+    const response = await fetch(`/productos/${id}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(producto)
     });
 
@@ -88,11 +78,9 @@ export async function actualizarProducto(id, producto) {
 
 export async function eliminarProducto(id) {
   try {
-    const response = await fetch(`${API_URL}/${id}`, {
+    const response = await fetch(`/productos/${id}`, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      headers: { 'Content-Type': 'application/json' }
     });
 
     if (!response.ok) {
@@ -112,12 +100,10 @@ export async function subirCSV(file) {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch(`${API_URL}/csv`, {
+    const response = await fetch('/productos/csv', {
       method: 'POST',
-      body: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+      body: formData
+      // NO pongas headers 'Content-Type' porque el browser lo asigna automáticamente para multipart/form-data
     });
 
     if (!response.ok) {
@@ -133,11 +119,9 @@ export async function subirCSV(file) {
 
 export async function desactivarProducto(id) {
   try {
-    const response = await fetch(`${API_URL}/desactivar/${id}`, {
+    const response = await fetch(`/productos/desactivar/${id}`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      headers: { 'Content-Type': 'application/json' }
     });
 
     if (!response.ok) {
@@ -153,11 +137,9 @@ export async function desactivarProducto(id) {
 
 export async function activarProducto(id) {
   try {
-    const response = await fetch(`${API_URL}/activar/${id}`, {
+    const response = await fetch(`/productos/activar/${id}`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      headers: { 'Content-Type': 'application/json' }
     });
 
     if (!response.ok) {
@@ -172,13 +154,10 @@ export async function activarProducto(id) {
 }
 
 export async function buscarProductos(campo, valor) {
-  const bodyData = {
-    campo: campo,
-    valor: valor
-  };
+  const bodyData = { campo, valor };
 
   try {
-    const response = await fetch(`${API_URL}/buscar`, {
+    const response = await fetch('/productos/buscar', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(bodyData)

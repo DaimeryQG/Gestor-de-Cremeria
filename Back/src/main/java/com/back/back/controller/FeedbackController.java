@@ -9,7 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/feedback")
-@CrossOrigin(origins = { "http://127.0.0.1:8080", "http://localhost:8080" })
 public class FeedbackController {
 
     private final FeedbackService feedbackService;

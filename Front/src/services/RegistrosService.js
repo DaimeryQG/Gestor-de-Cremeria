@@ -1,7 +1,5 @@
-const API_URL = 'http://localhost:8081';
-
 export async function crearRegistro(registro) {
-  const response = await fetch(`${API_URL}/registros/registrar`, {
+  const response = await fetch('/registros/registrar', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(registro)
@@ -14,7 +12,7 @@ export async function crearRegistro(registro) {
 }
 
 export async function actualizarRegistro(id, updatedData) {
-  const response = await fetch(`${API_URL}/registros/${id}`, {
+  const response = await fetch(`/registros/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updatedData)
@@ -27,7 +25,7 @@ export async function actualizarRegistro(id, updatedData) {
 }
 
 export async function eliminarRegistro(id) {
-  const response = await fetch(`${API_URL}/registros/${id}`, {
+  const response = await fetch(`/registros/${id}`, {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' }
   });
@@ -39,7 +37,7 @@ export async function eliminarRegistro(id) {
 }
 
 export async function activarRegistro(id) {
-  const response = await fetch(`${API_URL}/registros/activar/${id}`, {
+  const response = await fetch(`/registros/activar/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' }
   });
@@ -48,7 +46,7 @@ export async function activarRegistro(id) {
 }
 
 export async function desactivarRegistro(id) {
-  const response = await fetch(`${API_URL}/registros/desactivar/${id}`, {
+  const response = await fetch(`/registros/desactivar/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' }
   });
@@ -58,11 +56,9 @@ export async function desactivarRegistro(id) {
 
 export async function obtenerTodos() {
   try {
-    const response = await fetch(`${API_URL}/registros`, {
+    const response = await fetch('/registros', {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      headers: { 'Content-Type': 'application/json' }
     });
 
     if (!response.ok) {
@@ -77,42 +73,8 @@ export async function obtenerTodos() {
   }
 }
 
-/*
-export async function registrarVenta(productos) {
-  try {
-    const usuarioData = JSON.parse(sessionStorage.getItem('usuario'));
-    if (!usuarioData) throw new Error("Usuario no autenticado");
-
-    const detalles = productos.map(prod => ({
-      producto: { productoId: prod.productoId },
-      cantidad: prod.cantidad,
-      precioUnitario: prod.precioUnitario
-    }));
-
-    const ventaData = {
-      usuario: usuarioData.username,
-      rol: usuarioData.rol,
-      detalles: detalles
-    };
-
-    const response = await fetch(`${API_URL}/ventas`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(ventaData)
-    });
-
-    if (!response.ok) throw new Error('Error al registrar venta');
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error en venta:", error);
-    throw error;
-  }
-}
-*/
-
 export async function buscarDinamico(filtros) {
-  const response = await fetch(`${API_URL}/registros/buscar/dinamico`, {
+  const response = await fetch('/registros/buscar/dinamico', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(filtros)

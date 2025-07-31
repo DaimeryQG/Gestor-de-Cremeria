@@ -1,16 +1,14 @@
 <template>
-  <!-- El formulario siempre se muestra, pero se oculta si ya se envió el feedback -->
+  <!-- El formulario se muestra solo si no se ha enviado -->
   <div class="feedback-container" v-if="!feedbackEnviado">
     <div class="feedback-card">
       <h2>📝 Déjanos tu Puntuación</h2>
       <form @submit.prevent="enviarFeedbackFormulario">
-        <!-- Puntuación con caras -->
+        <!-- Puntuación con caritas -->
         <div class="form-group">
           <label for="puntaje">Puntuación:</label>
           <div class="rating">
-            <span 
-              v-for="i in 5" 
-              :key="i" 
+            <span v-for="i in 5" :key="i"
               :class="['rating-face', i === feedback.puntaje ? 'selected' : '', i <= feedback.puntaje ? 'active' : '']"
               @click="setPuntuacion(i)">
               <span v-if="i === 1">😡</span>
@@ -20,6 +18,18 @@
               <span v-if="i === 5">😄</span>
             </span>
           </div>
+        </div>
+
+        <!-- Comentario -->
+        <div class="form-group">
+          <label for="comentario">Comentario:</label>
+          <textarea
+            id="comentario"
+            v-model="feedback.comentario"
+            placeholder="Escribe tu opinión aquí..."
+            rows="4"
+            style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid #ccc;"
+          ></textarea>
         </div>
 
         <div class="button-group">
@@ -36,42 +46,48 @@
 import { ref } from 'vue';
 import { enviarFeedback } from '@/services/FeedbackService';
 
-// Estado para saber si el feedback fue enviado
 const feedbackEnviado = ref(false);
 const feedback = ref({
   puntaje: 0,
+  comentario: '',
+  nombreUsuario: '',
+  rol: ''
 });
 
 const mensaje = ref('');
 
-// Función que se ejecuta cuando el formulario es enviado
 const enviarFeedbackFormulario = async () => {
   if (feedback.value.puntaje < 1 || feedback.value.puntaje > 5) {
     mensaje.value = '❌ La puntuación debe estar entre 1 y 5.';
     return;
   }
 
-  try {
-    // Aquí se envía el feedback a la API
-    const data = await enviarFeedback(feedback.value);
-    mensaje.value = '✅ ¡Gracias por tu feedback!';
-    feedbackEnviado.value = true; // Marcamos que el feedback fue enviado
+  if (!feedback.value.comentario.trim()) {
+    mensaje.value = '❌ Por favor, escribe un comentario.';
+    return;
+  }
 
-    // Aquí puedes cerrar el formulario si ya se envió el feedback
+  // Obtener usuario desde sessionStorage
+  const usuarioData = JSON.parse(sessionStorage.getItem('usuario')) || {};
+  feedback.value.nombreUsuario = usuarioData?.username || 'Anónimo';
+  feedback.value.rol = usuarioData?.rol || 'SIN_ROL';
+
+  try {
+    await enviarFeedback(feedback.value);
+    mensaje.value = '✅ ¡Gracias por tu feedback!';
+    feedbackEnviado.value = true;
   } catch (error) {
     console.error('Error:', error);
     mensaje.value = '❌ Error al enviar el feedback.';
   }
 };
 
-// Función para seleccionar la puntuación
 const setPuntuacion = (valor) => {
   feedback.value.puntaje = valor;
 };
 
-// Función para cerrar el formulario (en caso de que el usuario lo desee)
 const cerrarFormulario = () => {
-  feedbackEnviado.value = true; // Al cerrar, marcamos que se envió el feedback
+  feedbackEnviado.value = true;
 };
 </script>
 

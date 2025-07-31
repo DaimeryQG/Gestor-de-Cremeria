@@ -3,7 +3,7 @@
     <!-- Formulario de Búsqueda -->
     <div class="card p-3 mb-4 search-card text-center">
       <form @submit.prevent="searchProduct" class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-        
+
         <div class="search-group d-flex align-items-center">
           <label for="searchOption" class="text-white mb-0 mr-2">Buscar por:</label>
           <select v-model="searchOption" id="searchOption" class="form-control custom-input">
@@ -28,16 +28,19 @@
           </template>
           <template v-else-if="searchOption === 'proveedor'">
             <select v-model="searchTerm" class="form-control custom-input">
-              <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">{{ proveedor.nombre }}</option>
+              <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor.nombre">{{ proveedor.nombre
+                }}</option>
             </select>
           </template>
           <template v-else-if="searchOption === 'categoria'">
             <select v-model="searchTerm" class="form-control custom-input">
-              <option v-for="categoria in categorias" :key="categoria.id" :value="categoria.nombre">{{ categoria.nombre }}</option>
+              <option v-for="categoria in categorias" :key="categoria.id" :value="categoria.nombre">{{ categoria.nombre
+                }}</option>
             </select>
           </template>
           <template v-else>
-            <input v-model="searchTerm" :type="isNumberField ? 'number' : 'text'" class="form-control custom-input" placeholder="Ingrese el valor">
+            <input v-model="searchTerm" :type="isNumberField ? 'number' : 'text'" class="form-control custom-input"
+              placeholder="Ingrese el valor">
           </template>
         </div>
 
@@ -91,7 +94,8 @@
 
               <div class="form-group d-flex align-items-center mb-3">
                 <label for="precio" class="col-md-4 text-md-right">Precio:</label>
-                <input v-model="formData.precio" type="number" id="precio" class="form-control col-md-8" step="0.01" required>
+                <input v-model="formData.precio" type="number" id="precio" class="form-control col-md-8" step="0.01"
+                  required>
               </div>
 
               <div class="form-group d-flex align-items-center mb-3">
@@ -102,20 +106,24 @@
               <div class="form-group d-flex align-items-center mb-3">
                 <label for="categoria" class="col-md-4 text-md-right">Categoría:</label>
                 <select v-model="formData.categoria" id="categoria" class="form-control col-md-8" required>
-                  <option v-for="categoria in categorias" :key="categoria.id" :value="categoria">{{ categoria.nombre }}</option>
+                  <option v-for="categoria in categorias" :key="categoria.categoriaId" :value="categoria">
+                    {{ categoria.nombre }}
+                  </option>
                 </select>
               </div>
 
               <div class="form-group d-flex align-items-center mb-3">
                 <label for="proveedor" class="col-md-4 text-md-right">Proveedor:</label>
                 <select v-model="formData.proveedor" id="proveedor" class="form-control col-md-8" required>
-                  <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor">{{ proveedor.nombre }}</option>
+                  <option v-for="proveedor in proveedores" :key="proveedor.proveedorId" :value="proveedor">{{ proveedor.nombre }}
+                  </option>
                 </select>
               </div>
 
               <div class="form-group d-flex align-items-center mb-3">
                 <label for="fechaCaducidad" class="col-md-4 text-md-right">Fecha de Caducidad:</label>
-                <input v-model="formData.fechaCaducidad" type="date" id="fechaCaducidad" class="form-control col-md-8" required>
+                <input v-model="formData.fechaCaducidad" type="date" id="fechaCaducidad" class="form-control col-md-8"
+                  required>
               </div>
 
               <div class="modal-footer bg-light border-0 d-flex flex-wrap gap-2">
@@ -162,14 +170,16 @@
               <div class="form-group d-flex align-items-center mb-3">
                 <label class="col-md-4 text-md-right">Categoría:</label>
                 <select v-model="formData.categoria" class="form-control col-md-8" required>
-                  <option v-for="categoria in categorias" :key="categoria.id" :value="categoria">{{ categoria.nombre }}</option>
+                  <option v-for="categoria in categorias" :key="categoria.categoriaId" :value="categoria">{{ categoria.nombre }}
+                  </option>
                 </select>
               </div>
 
               <div class="form-group d-flex align-items-center mb-3">
                 <label class="col-md-4 text-md-right">Proveedor:</label>
                 <select v-model="formData.proveedor" class="form-control col-md-8" required>
-                  <option v-for="proveedor in proveedores" :key="proveedor.id" :value="proveedor">{{ proveedor.nombre }}</option>
+                  <option v-for="proveedor in proveedores" :key="proveedor.proveedorId" :value="proveedor">{{ proveedor.nombre }}
+                  </option>
                 </select>
               </div>
 
@@ -205,7 +215,7 @@
 import { obtenerCategorias } from '@/services/CategoriaService.js';
 import { obtenerProveedores } from '@/services/ProveedorService.js';
 import { buscarProductos, obtenerTodosProductos, crearProducto, actualizarProducto, eliminarProducto, activarProducto, desactivarProducto } from '@/services/ProductoService.js';
-import { generarProductosPDF } from '@/utils/PdfProducto.js'; 
+import { generarProductosPDF } from '@/utils/PdfProducto.js';
 
 export default {
   data() {
@@ -253,6 +263,7 @@ export default {
     async obtenerProductos() {
       try {
         const response = await obtenerTodosProductos();
+        console.log("Productos obtenidos en Vue:", response); 
         this.productList = response;
       } catch (error) {
         console.error('Error al obtener productos:', error);
@@ -345,37 +356,37 @@ export default {
 
     // Método para generar el PDF de los productos
     async generarPDFProductos() {
-  if (!this.searchTerm && this.searchOption !== 'activo') {
-    alert('Por favor, ingresa un término de búsqueda válido.');
-    return;
-  }
+      if (!this.searchTerm && this.searchOption !== 'activo') {
+        alert('Por favor, ingresa un término de búsqueda válido.');
+        return;
+      }
 
-  try {
-    const valor = (this.searchOption === 'activo') ? this.searchTerm : this.searchTerm.trim();
-    const productos = await buscarProductos(this.searchOption, valor);
+      try {
+        const valor = (this.searchOption === 'activo') ? this.searchTerm : this.searchTerm.trim();
+        const productos = await buscarProductos(this.searchOption, valor);
 
-    if (!productos || productos.length === 0) {
-      alert('No se encontraron productos para generar el PDF.');
-      return;
+        if (!productos || productos.length === 0) {
+          alert('No se encontraron productos para generar el PDF.');
+          return;
+        }
+
+        const usuarioActual = JSON.parse(sessionStorage.getItem('usuario'));
+
+        if (!usuarioActual) {
+          alert('No se encontraron datos del usuario.');
+          return;
+        }
+
+        generarProductosPDF(productos, usuarioActual, this.searchOption, valor);
+      } catch (error) {
+        console.error('Error al generar el PDF:', error);
+        alert('Hubo un error al generar el PDF. Revisa la consola para más detalles.');
+      }
     }
-
-    const usuarioActual = JSON.parse(sessionStorage.getItem('usuario'));
-
-    if (!usuarioActual) {
-      alert('No se encontraron datos del usuario.');
-      return;
-    }
-
-    generarProductosPDF(productos, usuarioActual, this.searchOption, valor);
-  } catch (error) {
-    console.error('Error al generar el PDF:', error);
-    alert('Hubo un error al generar el PDF. Revisa la consola para más detalles.');
-  }
-}
   }
 };
 </script>
- 
+
 <style scoped>
 .container-fluid {
   padding-top: 0;
@@ -487,7 +498,7 @@ export default {
   font-size: 0.95rem;
 }
 
-.row > div {
+.row>div {
   padding: 1rem;
 }
 

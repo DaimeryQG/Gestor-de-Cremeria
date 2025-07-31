@@ -14,19 +14,25 @@ import com.back.back.exception.CSVFormatException;
 import com.back.back.exception.ConflictException;
 import com.back.back.exception.ResourceNotFoundException;
 import com.back.back.model.Producto;
+import com.back.back.repository.CategoriaRepository;
 import com.back.back.repository.ProductoRepository;
+import com.back.back.repository.ProveedorRepository;
 import com.back.back.utils.CSVHelper;
 
 @Service
 public class ProductoService {
 
     private final ProductoRepository productoRepository;
-
+    private final CategoriaRepository categoriaRepository;
+    private final ProveedorRepository proveedorRepository;
     private final CSVHelper csvHelper;
 
-    public ProductoService(ProductoRepository productoRepository, CSVHelper csvHelper) {
-        this.productoRepository = productoRepository;
-        this.csvHelper = csvHelper;
+    public ProductoService(ProductoRepository productoRepository, CSVHelper csvHelper,
+                      CategoriaRepository categoriaRepository, ProveedorRepository proveedorRepository) {
+    this.productoRepository = productoRepository;
+    this.csvHelper = csvHelper;
+    this.categoriaRepository = categoriaRepository;
+    this.proveedorRepository = proveedorRepository;
     }
 
     public List<Producto> getAllProductosWithRelations() {
@@ -56,29 +62,44 @@ public class ProductoService {
     }
 
     public Producto updateProducto(Long id, Producto producto) {
-        if (!producto.isActivo()) {
-            throw new IllegalStateException("No se puede actualizar el producto porque no está activo.");
-        }
+    return productoRepository.findByIdWithRelations(id)
+        .map(existingProducto -> {
+            if (!existingProducto.isActivo()) {
+                throw new IllegalStateException("No se puede actualizar el producto porque no está activo.");
+            }
 
-        return productoRepository.findByIdWithRelations(id)
-                .map(existingProducto -> {
-                    existingProducto.setNombre(producto.getNombre());
-                    existingProducto.setDescripcion(producto.getDescripcion());
-                    existingProducto.setPrecio(producto.getPrecio());
-                    existingProducto.setStock(producto.getStock());
-                    existingProducto.setFechaCaducidad(producto.getFechaCaducidad());
-                    existingProducto.setActivo(producto.isActivo());
+            existingProducto.setNombre(producto.getNombre());
+            existingProducto.setDescripcion(producto.getDescripcion());
+            existingProducto.setPrecio(producto.getPrecio());
+            existingProducto.setStock(producto.getStock());
+            existingProducto.setFechaCaducidad(producto.getFechaCaducidad());
+            existingProducto.setActivo(producto.isActivo());
 
-                    if (producto.getCategoria() != null) {
-                        existingProducto.setCategoria(producto.getCategoria());
-                    }
-                    if (producto.getProveedor() != null) {
-                        existingProducto.setProveedor(producto.getProveedor());
-                    }
+            // Validar categoría solo si no es null y existe en BD
+            if (producto.getCategoria() != null) {
+                Long categoriaId = Long.valueOf(producto.getCategoria().getCategoriaId());
+                if (categoriaId != null && categoriaRepository.existsById(categoriaId)) {
+                    existingProducto.setCategoria(producto.getCategoria());
+                } else {
+                    throw new IllegalArgumentException("La categoría proporcionada no existe.");
+                }
+            }
 
-                    return productoRepository.save(existingProducto);
-                }).orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
-    }
+            // Validar proveedor solo si no es null y existe en BD
+            if (producto.getProveedor() != null) {
+                Long proveedorId = producto.getProveedor().getProveedorId();
+                if (proveedorId != null && proveedorRepository.existsById(proveedorId)) {
+                    existingProducto.setProveedor(producto.getProveedor());
+                } else {
+                    throw new IllegalArgumentException("El proveedor proporcionado no existe.");
+                }
+            }
+
+            return productoRepository.save(existingProducto);
+        })
+        .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
+}
+
 
     public void deleteProducto(Long id) {
         Producto producto = productoRepository.findById(id)
@@ -118,11 +139,11 @@ public class ProductoService {
     }
 
     public void activar(Long id) {
-        Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
-        producto.setActivo(true);
-        productoRepository.save(producto);
-    }
+    Producto producto = productoRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
+    producto.setActivo(true);
+    productoRepository.save(producto);
+}
 
     public List<Producto> buscarPorUnCampo(Map<String, String> filtros) {
         if (!filtros.containsKey("campo") || !filtros.containsKey("valor")) {

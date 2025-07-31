@@ -1,27 +1,42 @@
-const API_URL = 'http://localhost:8081/categorias';
+const API_URL = import.meta.env.VITE_API_URL;
 
 export async function obtenerCategorias() {
+  const url = `${API_URL}/categorias`;
+  console.log("URL fetch categorias:", url);
+
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(url, {
       method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': '69420'
+      }
     });
 
-    if (!response.ok) throw new Error('Error al obtener las categorías');
+    const text = await response.text();
+    console.log("Respuesta raw:", text);
 
-    const categorias = await response.json();
+    if (!response.ok) {
+      throw new Error('Error inesperado del servidor:\n' + text);
+    }
+
+    const categorias = JSON.parse(text);
     return categorias;
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error al obtener categorías:', error);
     throw error;
   }
 }
 
 export async function crearCategoria(categoria) {
+  const url = `${API_URL}/categorias`;
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': '69420'
+      },
       body: JSON.stringify(categoria),
     });
 

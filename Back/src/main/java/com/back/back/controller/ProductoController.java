@@ -9,7 +9,6 @@ import com.back.back.model.Producto;
 import com.back.back.service.ProductoService;
 
 @RestController
-@CrossOrigin(origins = { "http://127.0.0.1:8080", "http://localhost:8080" })
 @RequestMapping("/productos")
 public class ProductoController {
 

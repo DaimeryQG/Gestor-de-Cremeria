@@ -1,8 +1,6 @@
-const API_URL = 'http://localhost:8081/proveedores';
-
 export async function obtenerProveedores() {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch('/proveedores', {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });
@@ -19,7 +17,7 @@ export async function obtenerProveedores() {
 
 export async function crearProveedor(proveedor) {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch('/proveedores', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(proveedor),
@@ -37,7 +35,7 @@ export async function crearProveedor(proveedor) {
 
 export async function obtenerProveedorPorId(id) {
   try {
-    const response = await fetch(`${API_URL}/${id}`, {
+    const response = await fetch(`/proveedores/${id}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });
@@ -54,7 +52,7 @@ export async function obtenerProveedorPorId(id) {
 
 export async function actualizarProveedor(id, proveedor) {
   try {
-    const response = await fetch(`${API_URL}/${id}`, {
+    const response = await fetch(`/proveedores/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(proveedor),
@@ -72,7 +70,7 @@ export async function actualizarProveedor(id, proveedor) {
 
 export async function eliminarProveedor(id) {
   try {
-    const response = await fetch(`${API_URL}/${id}`, {
+    const response = await fetch(`/proveedores/${id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
     });
@@ -89,7 +87,7 @@ export async function eliminarProveedor(id) {
 
 export async function activarProveedor(id) {
   try {
-    const response = await fetch(`${API_URL}/activar/${id}`, {
+    const response = await fetch(`/proveedores/activar/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
     });
@@ -106,7 +104,7 @@ export async function activarProveedor(id) {
 
 export async function desactivarProveedor(id) {
   try {
-    const response = await fetch(`${API_URL}/desactivar/${id}`, {
+    const response = await fetch(`/proveedores/desactivar/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
     });
@@ -123,7 +121,7 @@ export async function desactivarProveedor(id) {
 
 export async function buscarProveedorDinamico(filtros) {
   try {
-    const response = await fetch(`${API_URL}/buscar/dinamico`, {
+    const response = await fetch(`/proveedores/buscar/dinamico`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(filtros),
