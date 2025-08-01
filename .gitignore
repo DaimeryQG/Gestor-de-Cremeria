@@ -1,0 +1,50 @@
+# Ignorar archivos compilados de Java
+*.class
+
+# Ignorar directorios generados por Maven y compilación
+target/
+bin/
+out/
+
+# Ignorar configuraciones de Eclipse/IntelliJ
+.metadata/
+.settings/
+.classpath
+.project
+.idea/
+*.iml
+
+# Ignorar dependencias descargadas de Maven
+.mvn/
+
+# === NUEVO: Ignorar archivos de Vue y Node.js ===
+
+# Ignorar dependencias de Node.js
+Front/node_modules/
+Front1/node_modules/
+
+# Ignorar archivos de construcción de Vue
+Front/dist/
+Front1/dist/
+Front/build/
+Front1/build/
+
+# Ignorar cachés y logs
+Front/.cache/
+Front1/.cache/
+Front/npm-debug.log*
+Front1/npm-debug.log*
+Front/yarn-debug.log*
+Front1/yarn-debug.log*
+Front/yarn-error.log*
+Front1/yarn-error.log*
+
+# Ignorar configuraciones de VS Code y JetBrains
+Front/.vscode/
+Front1/.vscode/
+Front/.idea/
+Front1/.idea/
+
+# Ignorar archivos del sistema
+Thumbs.db
+.DS_Store

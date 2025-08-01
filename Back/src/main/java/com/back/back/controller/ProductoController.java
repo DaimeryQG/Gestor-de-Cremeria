@@ -1,0 +1,69 @@
+package com.back.back.controller;
+
+import java.util.List;
+import java.util.Map;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import com.back.back.model.Producto;
+import com.back.back.service.ProductoService;
+
+@RestController
+@RequestMapping("/productos")
+public class ProductoController {
+
+    private final ProductoService productoService;
+
+    public ProductoController(ProductoService productoService) {
+        this.productoService = productoService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Producto>> getAllProductos() {
+        return ResponseEntity.ok(productoService.getAllProductosWithRelations());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Producto> getProductoById(@PathVariable Long id) {
+        return ResponseEntity.ok(productoService.getProductoByIdWithRelations(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<Producto> createProducto(@RequestBody Producto producto) {
+        return ResponseEntity.ok(productoService.saveProducto(producto));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> updateProducto(@PathVariable Long id, @RequestBody Producto producto) {
+        return ResponseEntity.ok(productoService.updateProducto(id, producto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProducto(@PathVariable Long id) {
+        productoService.deleteProducto(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/csv")
+    public ResponseEntity<Void> uploadCSV(@RequestParam("file") MultipartFile file) {
+        productoService.saveProductosFromCSV(file);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/desactivar/{id}")
+    public ResponseEntity<Void> desactivarProducto(@PathVariable Long id) {
+        productoService.desactivar(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/activar/{id}")
+    public ResponseEntity<Void> activarProducto(@PathVariable Long id) {
+        productoService.activar(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/buscar")
+    public ResponseEntity<?> buscarPorUnCampo(@RequestBody Map<String, String> filtros) {
+        return ResponseEntity.ok(productoService.buscarPorUnCampo(filtros));
+    }
+}
