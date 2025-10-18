@@ -28,13 +28,23 @@ export default defineConfig({
     }
   },
   server: {
-  host: '0.0.0.0',
-  port: 5173,
-  strictPort: true,
-  open: false, 
-  cors: true,
-  allowedHosts: ['b634-38-65-128-98.ngrok-free.app'],
-  proxy: {
+    host: '0.0.0.0',
+    port: 5173,
+    strictPort: true,
+    open: false,
+    cors: true,
+    allowedHosts: ['b634-38-65-128-98.ngrok-free.app'],
+    proxy: {
+      '/login': {
+        target: 'http://localhost:8081',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/categorias': {
+        target: 'http://localhost:8081',
+        changeOrigin: true,
+        secure: false,
+      },
       '/proveedores': {
         target: 'http://localhost:8081',
         changeOrigin: true,
@@ -51,20 +61,20 @@ export default defineConfig({
         secure: false,
       },
       '/feedback': {
-    target: 'http://localhost:8081',
-    changeOrigin: true,
-    secure: false,
-  },
-  '/ventas': {
-    target: 'http://localhost:8081',
-    changeOrigin: true,
-    secure: false,
-  },
-  '/reportes': {
-    target: 'http://localhost:8081',
-    changeOrigin: true,
-    secure: false,
-  },
+        target: 'http://localhost:8081',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/ventas': {
+        target: 'http://localhost:8081',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/reportes': {
+        target: 'http://localhost:8081',
+        changeOrigin: true,
+        secure: false,
+      },
       // Si tienes más endpoints backend, agrégalos aquí
     },
   },

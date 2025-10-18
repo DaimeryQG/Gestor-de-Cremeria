@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.back.back.exception.BadRequestException;
 import com.back.back.exception.ConflictException;
 import com.back.back.exception.ResourceNotFoundException;
 import com.back.back.model.Registro;
@@ -73,7 +74,7 @@ public class RegistroService {
                 .orElseThrow(() -> new ResourceNotFoundException("Registro no encontrado con ID: " + id));
 
         if (!registro.isActivo()) {
-            throw new IllegalStateException("No se puede actualizar el registro porque no está activo.");
+            throw new BadRequestException("No se puede actualizar el registro porque no está activo.");
         }
 
         registro.setNombre(registroActualizado.getNombre());
@@ -104,7 +105,7 @@ public class RegistroService {
                 .orElseThrow(() -> new ResourceNotFoundException("Registro no encontrado con ID: " + id));
 
         if (!registro.isActivo()) {
-            throw new IllegalStateException("No se puede eliminar el registro porque no está activo.");
+            throw new BadRequestException("No se puede eliminar el registro porque no está activo.");
         }
 
         registroRepository.delete(registro);
